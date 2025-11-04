@@ -1,0 +1,735 @@
+<?php
+	include_once 'connection.php';
+
+	if (!isset($_SESSION['cnt_member']) || $_SESSION['cnt_member'] == 0) 
+	{
+		header("Location: plans.php");
+		exit();
+	}
+	$logged_id = $_SESSION["member_id"]; // Replace with actual session variable
+
+?>
+
+<!doctype html>
+<html lang="en">
+
+<!-- Dream Class By user-interests.html  [XR&CO'2014], Fri, 14 Feb 2025 06:49:32 GMT -->
+<head>
+    <title><?php echo $WEB_TITLE; ?></title>
+    <!--== META TAGS ==-->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="theme-color" content="#f6af04">
+    <meta name="description" content="">
+    <meta name="keyword" content="">
+    <!--== FAV ICON(BROWSER TAB ICON) 
+	
+	
+    <link rel="shortcut icon" href="images/fav.ico" type="image/x-icon">
+    <!--== CSS FILES ==-->
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/animate.min.css">
+    <link rel="stylesheet" href="css/style.css">
+	
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+
+	<style>
+	.db-int-pro-1 img {
+		border-radius: 5px; /* Increased border-radius for more rounded corners */
+		object-fit: fill; /* Ensures the image fits inside the container without cropping */   
+	}
+	
+	.fa-heart:before {
+		content: "\f004";
+		position: absolute;
+		left: 609px;
+		top: 2px;
+	}
+	
+	.db-inte-prof-list div ol.poi {
+		padding: 0px 0 0 0;
+	}
+	</style>
+</head>
+
+<body>
+    <?php
+		include_once 'header.php';
+	
+		include_once 'menu.php';
+	?>
+	<section>
+        <div class="db">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4 col-lg-3">
+                        <div class="db-nav">
+                            <div class="db-nav-pro"><img src="member_profiles/<?php if(isset($_SESSION["updated_image"])){ echo $_SESSION["updated_image"];}elseif(isset($_SESSION["user_profile"])){echo $_SESSION["user_profile"];}else{echo 'image_placeholder.jpg';}?>" style="width: 210px; height: 190px;object-fit: unset;" class="img-fluid" alt=""></div>
+                            <div class="db-nav-list">
+                                <?php
+								   include_once 'dashboard_detail.php';
+								?>
+                            </div>
+						</div>
+                    </div>
+                    <div class="col-md-8 col-lg-9">
+                        <div class="row">
+                            <div class="col-md-12 db-sec-com">
+                                <h2 class="db-tit">Interest request</h2>
+                                <div class="db-pro-stat">
+                                    <!--<div class="dropdown">
+                                        <button type="button" class="btn btn-outline-secondary" data-bs-toggle="dropdown">
+                                            <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                          <li><a class="dropdown-item" href="#">Edid profile</a></li>
+                                          <li><a class="dropdown-item" href="#">View profile</a></li>
+                                          <li><a class="dropdown-item" href="#">Plan change</a></li>
+                                          <li><a class="dropdown-item" href="#">Download invoice now</a></li>
+                                        </ul>
+                                    </div>-->
+                                    <div class="db-inte-main">
+										<ul class="nav nav-tabs" role="tablist">
+											<li class="nav-item">
+                                              <a class="nav-link active" data-bs-toggle="tab" href="#home">Send request</a>
+                                            </li>
+                                            <li class="nav-item">
+                                              <a class="nav-link" data-bs-toggle="tab" href="#menu1">New requests</a>
+                                            </li>
+                                            <li class="nav-item">
+                                              <a class="nav-link" data-bs-toggle="tab" href="#menu2">Friend List</a>
+                                            </li>   
+											<li class="nav-item">
+                                              <a class="nav-link" data-bs-toggle="tab" href="#menu3">Wishlist</a>
+                                            </li>
+                                        </ul>
+                                        <!-- Tab panes -->
+										<!-- Tab panes -->
+										<div class="tab-content">
+											<div id="home" class="container tab-pane active"><br>
+												<div class="db-inte-prof-list">
+													<ul>
+														<?php
+														// Step 1: Get all send_request_tbl rows for logged-in user
+														$str = "SELECT sr.*, m.member_status 
+																FROM send_request_tbl sr
+																JOIN member_tbl m ON sr.member_id = m.member_id
+																WHERE sr.member_id = '" . $_SESSION['member_id'] . "' 
+																AND m.member_status = '1'
+																ORDER BY sr.send_request_id DESC";
+														$data = mysqli_query($conn, $str);
+
+														$all_pending_ids = array(); // Store only pending member IDs
+
+														while ($row = mysqli_fetch_assoc($data)) {
+															$json_data = $row['send_request_id']; // this field stores JSON like {"45":"pending","46":"accepted"}
+															$decoded = json_decode($json_data, true);
+
+															if (json_last_error() === JSON_ERROR_NONE) {
+																foreach ($decoded as $receiver_id => $status) {
+																	if ($status == 'pending') {
+																		$all_pending_ids[] = $receiver_id;
+																	}
+																}
+															}
+														}
+
+														// Step 2: If we have pending receiver IDs, fetch member details
+														if (!empty($all_pending_ids)) {
+															$member_ids_str = implode(",", array_map('intval', $all_pending_ids)); // Safe for SQL
+
+															$str1 = "SELECT m.member_id AS mem_id, m.*, c.*, md.*, mq.*
+																		FROM member_tbl m
+																		JOIN city_tbl c ON c.city_id = m.member_city
+																		JOIN member_detail_tbl md ON md.member_id = m.member_id
+																		JOIN member_qualification_tbl mq ON mq.member_detail_id = md.member_detail_id
+																		WHERE m.member_id IN ($member_ids_str)
+																		AND m.member_status = '1'
+																		ORDER BY m.member_id DESC";
+
+															$data1 = mysqli_query($conn, $str1);
+															$q1 = mysqli_num_rows($data1);
+															$_SESSION['count1'] = $q1;
+
+															while ($row1 = mysqli_fetch_assoc($data1)) {
+														?>
+															<li>
+																<div class="db-int-pro-1"> 
+																	<a href="profile_details.php?member_id=<?php echo $row1['mem_id']; ?>&Religion=<?php echo $row1['member_religion']; ?>&gender=<?php echo $row1['member_gender']; ?>&city=<?php echo $row1['member_city']; ?>">
+																		<img src="member_profiles/<?php echo $row1['member_image']; ?>" alt="">
+																	</a>
+																</div>
+																<div class="db-int-pro-2">
+																	<a href="profile_details.php?member_id=<?php echo $row1['mem_id']; ?>&Religion=<?php echo $row1['member_religion']; ?>&gender=<?php echo $row1['member_gender']; ?>&city=<?php echo $row1['member_city']; ?>">
+																		<h5><?php echo ucfirst($row1['member_lastname']) . " " . ucfirst($row1['member_firstname']);?></h5> 
+																	</a>
+																	<ol class="poi">
+																		<li>City: <strong><?php echo ucfirst($row1['city_name']);?></strong></li>
+																		<li>Age: <strong><?php echo $row1['member_age'];?></strong></li>
+																		<li>Height: <strong><?php echo $row1['member_height'];?></strong></li>
+																		<li>Job: <strong><?php echo ucfirst($row1['member_designation']);?></strong></li>
+																	</ol>
+
+																	<ol class="poi poi-date">
+																		<li>Qualification: <strong><?php echo $row1['member_qualification'];?></strong></li>
+																		<li>Occupation: <strong><?php echo ucfirst($row1['member_occupation']);?></strong></li>
+																	</ol>
+																	<a href="profile_details.php?member_id=<?php echo $row1['mem_id']; ?>&Religion=<?php echo $row1['member_religion']; ?>&gender=<?php echo $row1['member_gender']; ?>&city=<?php echo $row1['member_city']; ?>" class="cta-5">View full profile</a>
+																</div>
+																<div class="db-int-pro-3">
+																	<button type="button" class="btn btn-outline-danger btn-sm cancel-request-btn"
+																			data-recipient-id="<?php echo $row1['mem_id']; ?>">
+																		Cancel Request
+																	</button>
+																</div>
+															</li>
+														<?php
+															}
+														} 
+														?>
+													</ul>
+												</div>
+											</div>
+											<div id="menu1" class="container tab-pane fade"><br>
+												<div class="db-inte-prof-list">
+													<ul>
+														<?php
+														// Get the logged-in user's member_id
+														$logged_in_member_id = intval($_SESSION['member_id']);
+
+														// Query to find users who have sent a request to the logged-in user
+														$str2 = "SELECT m.*, c.*, md.*, mq.*, pd.*, p.*, sr.*
+															FROM member_tbl m
+															JOIN city_tbl c ON c.city_id = m.member_city
+															JOIN member_detail_tbl md ON md.member_id = m.member_id
+															JOIN member_qualification_tbl mq ON mq.member_detail_id = md.member_detail_id
+															JOIN package_detail_tbl pd ON m.member_id = pd.member_id
+															JOIN package_tbl p ON pd.package_id = p.package_id
+															JOIN send_request_tbl sr 
+																ON sr.member_id = m.member_id 
+																AND sr.send_request_id LIKE '%\"$logged_in_member_id\":\"pending\"%'
+															WHERE m.member_status = '1'
+															ORDER BY m.member_id DESC";
+															//echo $str2;
+															$data2=mysqli_query($conn,$str2);
+															$q2 = mysqli_num_rows($data2);
+															$_SESSION['count2'] = $q2;
+															
+															while($row2=mysqli_fetch_array($data2))
+															{
+															//echo $_SESSION['member_id'];?>
+														<li>
+															
+															<div class="db-int-pro-1"> 
+																<a href="profile_details.php?member_id=<?php echo $row2['member_id']; ?>&Religion=<?php echo $row2['member_religion']; ?>&gender=<?php echo $row2['member_gender']; ?>&city=<?php echo $row2['member_city']; ?>">
+																	<img src="member_profiles/<?php echo $row2['member_image']; ?>" alt="">
+																</a>
+																<span class="badge bg-primary user-pla-pat"><?php echo ucfirst($row2['package_name']) . " " . "user" ?></span>
+															</div>
+															<div class="db-int-pro-2">
+																<a href="profile_details.php?member_id=<?php echo $row2['member_id']; ?>&Religion=<?php echo $row2['member_religion']; ?>&gender=<?php echo $row2['member_gender']; ?>&city=<?php echo $row2['member_city']; ?>">
+																	<h5><?php echo ucfirst($row2['member_lastname']) . " " . ucfirst($row2['member_firstname']);?></h5> 
+																</a>
+																<ol class="poi">
+																	<li>City: <strong><?php echo ucfirst($row2['city_name']);?></strong></li>
+																	<li>Age: <strong><?php echo $row2['member_age'];?></strong></li>
+																	<li>Height: <strong><?php echo $row2['member_height'];?></strong></li>
+																	<li>Job: <strong><?php echo ucfirst($row2['member_designation']);?></strong></li>
+																</ol>
+																<ol class="poi poi-date">
+																	<li>Qualification: <strong><?php echo $row2['member_qualification'];?></strong></li>
+																	<li>Occupation: <strong><?php echo ucfirst($row2['member_occupation']);?></strong></li>
+																</ol>
+																<a href="profile_details.php?member_id=<?php echo $row2['member_id']; ?>&Religion=<?php echo $row2['member_religion']; ?>&gender=<?php echo $row2['member_gender']; ?>&city=<?php echo $row2['member_city']; ?>" class="cta-5">View full profile</a>
+															</div>
+															<div class="db-int-pro-3">
+																<button type="button" class="btn btn-success btn-sm accept-btn" 
+																		data-logged-id="<?php echo $row2['member_id']; ?>" 
+																		data-accepted-id="<?php echo $_SESSION['member_id']; ?>"
+																		data-request-id="<?php echo $row2['request_id']; ?>">
+																		Accept
+																</button>
+																<button type="button" class="btn btn-outline-danger btn-sm deny-request-btn"
+																	data-logged-id="<?php echo $_SESSION['member_id']; ?>"
+																	data-sender-id="<?php echo $row2['member_id']; ?>"
+																	data-request-id="<?php echo $row2['request_id']; ?>">
+																	Deny
+																</button>
+
+																
+															</div>
+														</li>
+														<?php 
+															} 
+														?>
+													</ul>
+												</div>
+											</div>
+											<div id="menu2" class="container tab-pane fade"><br>
+												<div class="db-inte-prof-list">
+													<ul>
+														<?php
+														$logged_member_id = $_SESSION['member_id'];
+
+														// Step 1: Get all send_request_id JSON rows where logged in member sent requests
+														$sql = "SELECT * FROM send_request_tbl WHERE member_id = '$logged_member_id'";
+														$res = mysqli_query($conn, $sql);
+
+														$friend_ids = array();
+
+														// Step 2: Loop through each row and extract accepted friend IDs
+														while($row = mysqli_fetch_assoc($res)) {
+															$send_request_json = json_decode($row['send_request_id'], true);
+															
+															foreach($send_request_json as $target_member_id => $status) {
+																if($status == 'accepted') {
+																	$friend_ids[] = $target_member_id;
+																}
+															}
+														}
+
+													// Step 3: Now also check if other users have added ME in accepted status
+													$sql2 = "SELECT * FROM send_request_tbl WHERE send_request_id LIKE '%\"$logged_member_id\":\"accepted\"%'";
+													$res2 = mysqli_query($conn, $sql2);
+
+													while($row2 = mysqli_fetch_assoc($res2)) {
+														$other_member_id = $row2['member_id'];
+														$send_request_json2 = json_decode($row2['send_request_id'], true);
+
+														if(isset($send_request_json2[$logged_member_id]) && $send_request_json2[$logged_member_id] == 'accepted') {
+															$friend_ids[] = $other_member_id;
+														}
+													}
+
+													// Remove duplicates
+													$friend_ids = array_unique($friend_ids);
+
+													// Step 4: Now fetch all friend names from member_tbl
+														if(count($friend_ids) > 0) {
+														$friend_ids_str = implode(",", $friend_ids);
+														$str33 = "SELECT m.*, c.city_name, md.*, mq.*
+															 FROM member_tbl m
+															 LEFT JOIN city_tbl c ON m.member_city = c.city_id
+															 LEFT JOIN member_detail_tbl md ON md.member_id = m.member_id
+															 LEFT JOIN member_qualification_tbl mq ON mq.member_detail_id = md.member_detail_id
+															 WHERE m.member_id IN ($friend_ids_str)
+															 AND m.member_status = '1';";
+														//echo $str33;
+														$data22=mysqli_query($conn,$str33);
+														while($row22=mysqli_fetch_array($data22))
+														{
+														?>
+														<li>
+															<div class="db-int-pro-1"> 
+																<a href="profile_details.php?member_id=<?php echo $row22['member_id']; ?>&Religion=<?php echo $row22['member_religion']; ?>&gender=<?php echo $row22['member_gender']; ?>&city=<?php echo $row22['member_city']; ?>">
+																	<img src="member_profiles/<?php echo $row22['member_image']; ?>" alt="">
+																</a>
+																<span class="badge bg-primary user-pla-pat"><?php //echo ucfirst($row22['package_name']) . " " . "user" ?></span>
+															</div>
+															<div class="db-int-pro-2">
+																<a href="profile_details.php?member_id=<?php echo $row22['member_id']; ?>&Religion=<?php echo $row22['member_religion']; ?>&gender=<?php echo $row22['member_gender']; ?>&city=<?php echo $row22['member_city']; ?>">
+																	<h5><?php echo ucfirst($row22['member_lastname']) . " " . ucfirst($row22['member_firstname']);?></h5> 
+																</a>
+																<ol class="poi">
+																	<li>City: <strong><?php echo ucfirst($row22['city_name']);?></strong></li>
+																	<li>Age: <strong><?php echo $row22['member_age'];?></strong></li>
+																	<li>Height: <strong><?php echo $row22['member_height'];?></strong></li>
+																	<li>Job: <strong><?php echo ucfirst($row22['member_designation']);?></strong></li>
+																</ol>
+																<ol class="poi poi-date">
+																	<li>Qualification: <strong><?php echo $row22['member_qualification'];?></strong></li>
+																	<li>Occupation: <strong><?php echo ucfirst($row22['member_occupation']);?></strong></li>
+																</ol>
+																<a href="profile_details.php?member_id=<?php echo $row22['member_id']; ?>&Religion=<?php echo $row22['member_religion']; ?>&gender=<?php echo $row22['member_gender']; ?>&city=<?php echo $row22['member_city']; ?>" class="cta-5">View full profile</a>
+															</div>		
+																<div class="db-int-pro-3">
+															
+																<button type="button" class="btn btn-outline-danger btn-sm unfriend-request-btn"
+																	data-logged-id="<?php echo $_SESSION['member_id']; ?>"
+																	data-sender-id="<?php echo $row22['member_id']; ?>">
+																	unfriend
+																</button>
+
+																
+															</div>
+														</li>
+														<?php 
+														} } 
+														?>
+													</ul>
+												</div>
+											</div>
+											<div id="menu3" class="container tab-pane fade"><br>
+												<div class="db-inte-prof-list">
+													<ul>
+														<?php
+														// Get the logged-in user's member_id
+														$logged_in_member_id = $_SESSION["member_id"];
+
+														$str3 = "SELECT *, member_tbl.member_id AS mem_id
+																 FROM bookmark_profile_tbl
+																 JOIN member_tbl 
+																	 ON bookmark_profile_tbl.member_profile_id = member_tbl.member_profile_id
+																 JOIN member_detail_tbl 
+																	 ON member_tbl.member_id = member_detail_tbl.member_id
+																 JOIN lifestyle_tbl 
+																	 ON member_detail_tbl.member_detail_id = lifestyle_tbl.member_detail_id
+																 JOIN member_qualification_tbl 
+																	 ON member_detail_tbl.member_detail_id = member_qualification_tbl.member_detail_id
+																 JOIN city_tbl 
+																	 ON member_tbl.member_city = city_tbl.city_id
+																 LEFT JOIN package_detail_tbl 
+																	 ON member_tbl.member_id = package_detail_tbl.member_id
+																 LEFT JOIN package_tbl 
+																	 ON package_detail_tbl.package_id = package_tbl.package_id	
+																 WHERE bookmark_profile_tbl.member_id = $logged_in_member_id ORDER BY bookmark_profile_tbl.bookmark_id DESC";
+
+														$data3 = mysqli_query($conn, $str3);
+
+														while ($row2 = mysqli_fetch_array($data3)) {
+														?>
+															<li class="profile-item" data-id="<?php echo $row2['member_profile_id']; ?>">
+																<div class="db-int-pro-1"> 
+																	<a href="profile_details.php?member_id=<?php echo $row2['mem_id']; ?>&Religion=<?php echo $row2['member_religion']; ?>&gender=<?php echo $row2['member_gender']; ?>&city=<?php echo $row2['member_city']; ?>">
+																		<img src="member_profiles/<?php echo $row2['member_image']; ?>" alt="">
+																	</a>
+																	<span class="badge bg-primary user-pla-pat"><?php echo ucfirst($row2['package_name']) . " user"; ?></span>
+																</div>
+																<div class="db-int-pro-2">
+																	<a href="profile_details.php?member_id=<?php echo $row2['mem_id']; ?>&Religion=<?php echo $row2['member_religion']; ?>&gender=<?php echo $row2['member_gender']; ?>&city=<?php echo $row2['member_city']; ?>">
+																		<h5><?php echo ucfirst($row2['member_lastname']) . " " . ucfirst($row2['member_firstname']); ?></h5>
+																	</a>
+
+																	<?php
+																	$profile_id = $row2['member_profile_id'];	
+																	$is_bookmarked = false;
+																	$check_wishlist = "SELECT * FROM bookmark_profile_tbl WHERE member_id = '$logged_in_member_id' AND member_profile_id = '$profile_id'";
+																	$wishlist_result = mysqli_query($conn, $check_wishlist);
+																	if (mysqli_num_rows($wishlist_result) > 0) {
+																		$is_bookmarked = true;
+																	}
+																	?>
+																	
+																	<span class="wishlist-icon remove-wishlist" data-id="<?php echo $profile_id; ?>">
+																		<i class="<?php echo $is_bookmarked ? 'fas fa-heart' : 'far fa-heart'; ?>"></i>
+																	</span>
+
+																	<ol class="poi">
+																		<li>City: <strong><?php echo ucfirst($row2['city_name']); ?></strong></li>
+																		<li>Age: <strong><?php echo $row2['member_age']; ?></strong></li>
+																		<li>Height: <strong><?php echo $row2['member_height']; ?></strong></li>
+																		<li>Job: <strong><?php echo ucfirst($row2['member_designation']); ?></strong></li>
+																	</ol>
+																	<ol class="poi poi-date">
+																		<li>Qualification: <strong><?php echo $row2['member_qualification']; ?></strong></li>
+																		<li>Occupation: <strong><?php echo ucfirst($row2['member_occupation']); ?></strong></li>
+																	</ol>
+																	<a href="profile_details.php?member_id=<?php echo $row2['mem_id']; ?>&Religion=<?php echo $row2['member_religion']; ?>&gender=<?php echo $row2['member_gender']; ?>&city=<?php echo $row2['member_city']; ?>" class="cta-5">View full profile</a>
+																</div>
+															</li>
+														<?php } ?>
+													</ul>
+												<div>
+											<div>
+										</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- END -->
+
+  
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/select-opt.js"></script>
+    <script src="js/custom.js"></script>
+	<!-- FOOTER -->
+		<?php include_once 'footer.php';?>
+    <!-- END -->
+</body>
+
+
+
+<!-- Dream Class By user-interests.html  [XR&CO'2014], Fri, 14 Feb 2025 06:49:32 GMT -->
+<script>
+	$(document).on("click", ".accept-btn", function () {
+		var button = $(this); // Store button reference
+		var loggedMemberId = button.data("logged-id");
+		var acceptedMemberId = button.data("accepted-id");
+		var request_id = button.data("request-id");
+
+		$.ajax({
+			url: "accept_friend.php",
+			type: "POST",
+			data: {
+				logged_member_id: loggedMemberId,
+				accepted_member_id: acceptedMemberId,
+				request_id: request_id
+			},
+			success: function (response) {
+				if (response == "success") {
+					button.text("Accepted")
+						  .removeClass("btn-success")
+						  .addClass("btn-secondary")
+						  .prop("disabled", true);
+
+
+					// ✅ Reload New Requests tab
+					$('#menu1').load(location.href + " #menu1>*");
+
+					// ✅ Reload Friend List tab
+					$('#menu2').load(location.href + " #menu2>*", function () {
+						// ✅ Then activate Friend List tab
+						var triggerEl = document.querySelector('[data-bs-toggle="tab"][href="#menu2"]');
+						if (triggerEl) {
+							var tab = new bootstrap.Tab(triggerEl);
+							tab.show();
+						}
+					});
+				} else {
+					alert("Error: " + response);
+				}
+			}
+		});
+	});
+
+	
+    // Trigger auto-refresh in other tabs when request is canceled or denied
+    $(".cancel-request-btn").on("click", function () {
+        var recipientId = $(this).data("recipient-id");
+        var $button = $(this);
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You want to cancel this request?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, cancel it!',
+            cancelButtonText: 'No'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "cancel_request_ajax.php",
+                    type: "POST",
+                    data: { recipient_id: recipientId },
+                    success: function (response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Cancelled!',
+                            text: response,
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                        $button.closest("li").fadeOut("slow");
+
+                        // 👉 Trigger update for other tabs
+                        localStorage.setItem("request_updated", Date.now());
+                    },
+                    error: function () {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Something went wrong while cancelling!',
+                        });
+                    }
+                });
+            }
+        });
+    });
+
+    $(".deny-request-btn").on("click", function () {
+        var senderId = $(this).data("sender-id");
+        var loggedId = $(this).data("logged-id");
+        var requestId = $(this).data("request-id");
+        var $btn = $(this);
+
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You want to deny this request?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Yes, Deny"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "deny_request_ajax.php",
+                    type: "POST",
+                    data: {
+                        sender_id: senderId,
+                        recipient_id: loggedId,
+                        request_id: requestId
+                    },
+                    success: function (response) {
+                        Swal.fire({
+                            icon: "success",
+                            title: "Request Denied",
+                            text: response,
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                        $btn.closest("li").fadeOut("slow");
+
+                        // 👉 Trigger update for other tabs
+                        localStorage.setItem("request_updated", Date.now());
+                    },
+                    error: function () {
+                        Swal.fire("Error", "Failed to deny the request.", "error");
+                    }
+                });
+            }
+        });
+    });
+
+    // 🟡 Listen for request updates from other tabs/browsers
+    window.addEventListener("storage", function (e) {
+        if (e.key === "request_updated") {
+            // Reload the requests section only (optional full reload: location.reload())
+            $("#newRequestsContainer").load(location.href + " #newRequestsContainer>*", "");
+        }
+    });
+
+    // 🔄 Optional fallback - refresh every 30 sec
+    // setInterval(function(){
+    //     $("#newRequestsContainer").load(location.href + " #newRequestsContainer>*", "");
+    // }, 30000);
+</script>
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+			
+			const hash = window.location.hash;
+			//alert(hash);
+			if (hash === "#tab=menu1") {
+				const menu1Tab = document.querySelector('a[href="#menu1"]');
+				if (menu1Tab) menu1Tab.click();
+			} else if (hash === "#tab=menu2") {
+				const menu2Tab = document.querySelector('a[href="#menu2"]');
+				if (menu2Tab) menu2Tab.click();
+			}
+			// You can extend this if you have more tabs
+		});
+	</script>
+	<script>
+         $(document).ready(function() {
+            $('.wishlist-icon').click(function() {
+                var icon = $(this);
+                var profile_id = icon.data('id');
+
+                $.ajax({
+                    url: 'wishlist_action.php',
+                    type: 'POST',
+                    data: { profile_id: profile_id },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.status === 'not_logged_in') {
+                            window.location.href = 'login.php';
+                        }else if(response.status === 'expiry'){
+								window.location.href = 'plans.php';
+						}							
+						else {
+                            if (response.status === 'bookmarked') {
+                                icon.find('i').removeClass('far fa-heart').addClass('fas fa-heart').css('color', 'red');
+                            } else if (response.status === 'unbookmarked') {
+                                icon.find('i').removeClass('fas fa-heart').addClass('far fa-heart').css('color', '');
+                            }
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.log("AJAX Error: " + error);
+                    }
+                });
+            });
+        });
+    </script>
+	<script>
+		$(document).on("click", ".remove-wishlist", function () {
+			var profileId = $(this).data("id");
+			var element = $(this).closest(".profile-item");
+
+			$.ajax({
+				url: "remove_wishlist.php",
+				type: "POST",
+				data: { profile_id: profileId },
+				success: function (response) {
+					if (response.trim() === "success") {
+						element.fadeOut(300, function () { $(this).remove(); });
+					} else {
+						alert("Error removing profile from wishlist.");
+					}
+				}
+			});
+		});
+	</script>
+	<script>
+	//unfriend logic
+	$(document).on("click", ".unfriend-request-btn", function () {
+		var senderId = $(this).data("sender-id");
+		var recipientId = $(this).data("logged-id");
+
+		Swal.fire({
+			title: "Are you sure?",
+			text: "Do you really want to unfriend this person?",
+			icon: "warning",
+			showCancelButton: true,
+			confirmButtonColor: "#d33",
+			cancelButtonColor: "#3085d6",
+			confirmButtonText: "Yes, Unfriend!",
+			cancelButtonText: "Cancel"
+		}).then((result) => {
+			if (result.isConfirmed) {
+				$.ajax({
+					url: "unfriend_request.php",
+					type: "POST",
+					data: {
+						sender_id: senderId,
+						recipient_id: recipientId,
+					},
+					cache: false,
+					success: function (response) {
+						Swal.fire({
+							title: "Success!",
+							text: response,
+							icon: "success"
+						});
+
+						// ✅ Reload Friend List tab content
+						$('#menu2').load(location.href + " #menu2>*", function () {
+							console.log("Friend list updated.");
+
+							// ✅ Activate Friend List tab
+							var triggerEl = document.querySelector('[data-bs-toggle="tab"][href="#menu2"]');
+							if (triggerEl) {
+								var tab = new bootstrap.Tab(triggerEl);
+								tab.show();
+							}
+						});
+					},
+					error: function () {
+						Swal.fire({
+							title: "Error!",
+							text: "Something went wrong while processing the request.",
+							icon: "error"
+						});
+					}
+				});
+			}
+		});
+	});
+	</script>
+</html>

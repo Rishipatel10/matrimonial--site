@@ -1,0 +1,564 @@
+<?php
+include 'connection.php';
+	if (!isset($_SESSION['cnt_member']) || $_SESSION['cnt_member'] == 0) 
+	{
+		header("Location: plans.php");
+		exit();
+	}
+	
+	if(isset($_FILES["txtImage"]["name"]))
+  	{
+  		//echo $_FILES["txtImage"]["name"];die;
+  		if($_FILES["txtImage"]["name"]!="")
+  		{
+  			//echo "gefe";die;
+  			if($_FILES["txtImage"]["type"]=="image/png"||$_FILES["txtImage"]["type"]=="image/jpg"||$_FILES["txtImage"]["type"]=="image/jpeg")
+  			{
+  				$imgVendor=date("Ymdhis").$_FILES["txtImage"]["name"];
+
+  				$selQuery="select member_Image from member_tbl where member_id=".$_SESSION["member_id"];
+  				$selRes=mysqli_query($conn,$selQuery);
+  				$selResArr=mysqli_fetch_array($selRes);
+
+  				//if(file_exists("images/".$selResArr["Member_Image"]))
+  					//unlink("images/".$selResArr["Member_Image"]);
+
+  				$upQuery="update member_tbl set member_image='".$imgVendor."' where member_id=".$_SESSION["member_id"];
+  				mysqli_query($conn,$upQuery);
+
+  				move_uploaded_file($_FILES["txtImage"]["tmp_name"],"member_profiles/".$imgVendor);
+  				echo "<script type='text/javascript'>  window.location='user_interests.php'; </script>";
+  			}
+  			else
+  				echo "<script>alert('Profile Picture must be any one of types - png, jpg or jpeg');</script>";
+  		}
+  	}
+  	
+	$queryImage="select * from member_tbl where member_id=".$_SESSION["member_id"];
+ 
+	$resImage=mysqli_query($conn,$queryImage);
+	$resArrImage=mysqli_fetch_array($resImage);
+
+	if($resArrImage["member_image"]=="")
+		$imgVendorSet="image_placeholder.jpg";
+	else
+		$imgVendorSet=$resArrImage["member_image"];
+		$_SESSION["member_image"]=$imgVendorSet; 
+		
+	$_SESSION["updated_image"]=$imgVendorSet;	
+?>	
+<!doctype html>
+<html lang="en">
+
+
+<!-- Dream Class By user-dashboard.html  [XR&CO'2014], Fri, 14 Feb 2025 06:49:28 GMT -->
+<head>
+    <!--== META TAGS ==-->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="theme-color" content="#f6af04">
+    <meta name="description" content="">
+    <meta name="keyword" content="">
+	<title><?php echo $WEB_TITLE; ?></title>
+    <!--== FAV ICON(BROWSER TAB ICON) ==-->
+    <link rel="shortcut icon" href="images/fav.ico" type="image/x-icon">
+    <!--== CSS FILES ==-->
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/animate.min.css">
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+      <script src="js/respond.min.js"></script>
+      <![endif]-->
+	 
+	<style>
+	.db-int-pro-1 img {
+		border-radius: 5px; /* Increased border-radius for more rounded corners */
+		object-fit: fill; /* Ensures the image fits inside the container without cropping */
+	}
+	
+	.img-fluid {
+    max-width: 100%;
+    height: 261px;
+    width: 162px;
+	}
+	</style>
+		  <style type="text/css">
+			.nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
+				color: #555;
+				cursor: default;
+				background-color: #ffa417 !important; 
+				border: 1px solid #ddd;
+				border-bottom-color: transparent;
+			}
+			 .arrow-left:after {
+				  content: " ";
+				  position: absolute;
+				  left: 0px;
+				  top: 0px;
+				  border-right: 15px solid #757575a3;
+				  border-left: none;
+				  border-bottom: 15px solid transparent;
+				}
+
+				.containerEdit {
+				  position: relative;
+				}
+
+				
+				.overlayEdit {
+				  position: absolute;
+				  left:-1px;
+				  top: 0px;
+				  height: 100%;
+				  width: 100%;
+				  opacity: 0;
+				  transition: .3s ease;
+				  background-color: #ddddddb5;
+				  opacity: 0;
+				 
+				}
+				.body{
+					font-size: 100px;
+				}
+
+				.containerEdit:hover .overlayEdit {
+				  opacity: 1;
+				}
+				.iconEdit {
+				  color: #c32143;
+				  font-size: 30px;
+				  position: absolute;
+				  top: 50%;
+				  left: 50%;
+				  transform: translate(-50%, -50%);
+				  -ms-transform: translate(-50%, -50%);
+				  text-align: center;
+				}
+			/*a.one:link {color:#ff0000;}*/
+			/*a.one:visited {color:#0000ff;}*/
+			a.one:hover {color:#ffcc00;text-decoration:underline;}
+			.one{font-size: 17px;}
+			.btn1  {
+			  background-color: #df185c;
+			  color: white;
+			  padding: 0.5rem;
+			  font-family: sans-serif;
+			  border-radius: 0.3rem;
+			  cursor: pointer;
+			  /*margin-top: 1rem;*/
+			  float:right;
+			}
+			.btn1:hover{
+				background-color: #ffc107;
+			}
+			
+			.slider-wrapper {
+				width: 100%;
+				overflow: hidden;
+			}
+       </style>
+</head>
+
+<body>
+    <!-- PRELOADER -->
+    <!-- END PRELOADER -->
+
+    <!-- SEARCH -->
+    <!-- END PRELOADER -->
+
+    <!-- HEADER & MENU -->
+    <?php
+		include_once 'header.php';
+	?>
+    <!-- END HEADER & MENU -->
+
+    <!-- HEADER & MENU -->
+    <!-- END HEADER & MENU -->
+
+    <!-- HEADER & MENU -->
+    <?php
+		include_once 'menu.php';
+	?>
+    <!-- END MOBILE MENU POPUP -->
+
+    <!-- MOBILE USER PROFILE MENU POPUP -->
+    <!-- END USER PROFILE MENU POPUP -->
+    <!-- LOGIN -->
+    <section>
+        <div class="db">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4 col-lg-3">
+						<div class="db-nav">
+							<div class="db-nav-pro">
+                                <!--  <img src="images/profiles/12.jpg" class="img-fluid" alt=""> -->
+								<br>
+								<form enctype="multipart/form-data" method="POST">
+									<input type="file" name="txtImage" id="txtImage" onchange="submit();" style="display:none;">
+									<label id="lblImage" for="txtImage" style="cursor:pointer;">
+										<div class="containerEdit" id="adPic">
+											<img src="member_profiles/<?php echo $imgVendorSet; ?>" style="width: 210px; height: 190px;object-fit: unset;" />
+											<div class="overlayEdit">
+												<span href="#" class="iconEdit" title="User Edit">
+												<i class="fa fa-pencil"></i>
+												</span>
+											</div>
+										</div>
+									</label>
+								</form>
+							</div>
+							<div class="db-nav-list">
+								<?php
+								   include_once 'dashboard_detail.php';
+								?>
+							</div>
+						</div>
+					</div>
+                    <div class="col-md-8 col-lg-9">
+                        <div class="col-md-12 db-sec-com db-new-pro-main">
+                            <h2 class="db-tit">New Profiles Matches</h2>
+								<div class="slider-wrapper">
+									<ul class="slider">
+									<?php
+									
+										$memberid = $_SESSION['member_id'];
+										$member_religion = $_GET['religion'];
+										$member_gender = $_GET['gen'];
+										$user_city = $_GET['city'];
+
+							
+										$str = "SELECT * FROM member_tbl 
+										JOIN city_tbl ON member_tbl.member_city = city_tbl.city_id 
+										JOIN member_detail_tbl ON member_tbl.member_id = member_detail_tbl.member_id 
+										WHERE member_tbl.member_city = '".$user_city."' 
+										AND member_tbl.member_gender != '".$member_gender."' 
+										AND member_detail_tbl.member_religion = '".$member_religion."' 
+										AND member_tbl.member_id != '".$memberid."'
+										AND member_tbl.member_status = 1";
+
+										//echo $str;											
+										$data=mysqli_query($conn,$str);
+										while($row=mysqli_fetch_array($data))
+										{ 
+									?>
+											<li>
+												<div class="db-new-pro">
+													<img src="member_profiles/<?php echo $row['member_image'];?>" alt="" class="profile">
+													<div>
+														<h5><?php echo ucfirst($row['member_lastname']) . " " . ucfirst($row['member_firstname']); ?></h5>
+														<span class="city">City: <b><?php echo ucfirst($row['city_name']);?></span><br>
+														<span class="age">Age: <?php echo $row['member_age'] . " Years old";?></span><br>
+													</div>
+													<!--<div class="pro-ave" title="User currently available">
+														<span class="pro-ave-yes"></span>
+													</div>-->
+													<a href="profile_details.php?member_id=<?php echo $row['member_id']; ?>&Religion=<?php echo $row['member_religion']; ?>&gender=<?php echo $row['member_gender']; ?>&city=<?php echo $row['member_city']; ?>" class="fclick"></a>
+												</div>
+											</li>
+									<?php
+										}
+									?>
+								</ul>
+							</div>
+                        </div>
+                        <div class="row">
+                            <!--<div class="col-md-12 col-lg-6 col-xl-4 db-sec-com">
+                                <h2 class="db-tit">Profiles status</h2>
+                                <div class="db-pro-stat">
+                                    <h6>Profile completion</h6>
+                                    <!--<div class="dropdown">
+                                        <button type="button" class="btn btn-outline-secondary" data-bs-toggle="dropdown">
+                                            <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                          <li><a class="dropdown-item" href="#">Edid profile</a></li>
+                                          <li><a class="dropdown-item" href="#">View profile</a></li>
+                                          <li><a class="dropdown-item" href="#">Plan change</a></li>
+                                          <li><a class="dropdown-item" href="#">Download invoice now</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="db-pro-pgog">
+                                        <span><b class="count">90</b>%</span>
+                                    </div>
+                                    <ul class="pro-stat-ic">
+                                        <li><span><i class="fa fa-heart-o like" aria-hidden="true"></i><b>12</b>Likes</span></li>
+                                        <li><span><i class="fa fa-eye view" aria-hidden="true"></i><b>12</b>Views</span></li>
+                                        <li><span><i class="fa fa-handshake-o inte" aria-hidden="true"></i><b>12</b>Interests</span></li>
+                                        <li><span><i class="fa fa-hand-pointer-o clic" aria-hidden="true"></i><b>12</b>Clicks</span></li>
+                                    </ul>
+                                </div>
+                            </div>-->
+                            <div class="col-md-12 col-lg-6 col-xl-4 db-sec-com">
+                                <h2 class="db-tit">Plan details</h2>
+                                <div class="db-pro-stat">
+									<?php
+										if(isset($_SESSION["member_id"]))
+										{
+											$mid=$_SESSION["member_id"];
+										}
+										$str="select * from package_tbl,package_detail_tbl where package_tbl.package_id=package_detail_tbl.package_id and member_id='".$mid."'";
+
+										$data=mysqli_query($conn,$str);
+										$row=mysqli_fetch_array($data);
+									?>
+                                    <h6 class="tit-top-curv"><?php echo $row['package_name'] . " plan"; ?></h6>
+                                    <!--<div class="dropdown">
+                                        <button type="button" class="btn btn-outline-secondary" data-bs-toggle="dropdown">
+                                            <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                          <li><a class="dropdown-item" href="#">Edid profile</a></li>
+                                          <li><a class="dropdown-item" href="#">View profile</a></li>
+                                          <li><a class="dropdown-item" href="#">Plan change</a></li>
+                                          <li><a class="dropdown-item" href="#">Download invoice now</a></li>
+                                        </ul>
+                                    </div>-->
+                                    <div class="db-plan-card">
+                                        <img src="images/icon/plan.png" alt="">
+                                    </div>
+                                    <div class="db-plan-detil">
+                                        <ul>
+                                            <li>Plan name: 
+												<strong>
+													<?php 
+														if($row['package_name'] == "Gold")
+														{	
+															echo "<b style='color:#bd8937;'>" . ucfirst($row['package_name']) . "</b>"; 
+														}
+														elseif($row['package_name'] == "Silver")
+														{	
+															echo "<b style='color:#8a8585;'>" . ucfirst($row['package_name']) . "</b>"; 
+														}
+														elseif($row['package_name'] == "Platinum")
+														{	
+															echo "<b style='color:brown;'>" . ucfirst($row['package_name']) . "</b>"; 
+														}
+														else
+														{	
+															echo "<b style='color:black;'>" . ucfirst($row['package_name']) . "</b>"; 
+														}	
+													?>
+												</strong>
+											</li>
+                                            <li>Validity: <strong><?php echo $row['package_duration'] . " Months";?></strong></li>
+											<li>Valid till <strong><?php echo date("d-M-Y" , strtotime($row['package_exp_date']));?></strong></li>
+											<!--<li><a href="#" class="cta-3">Upgrade now</a></li>-->
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 col-xl-4 db-sec-com">
+                                <h2 class="db-tit">Recent chat list</h2>
+								<div class="db-pro-stat">
+									<div class="db-inte-prof-list db-inte-prof-chat">
+										<ul>
+											<!--$query = "SELECT DISTINCT m.*, md.*, mq.*, l.*, c.city_name, s.state_name
+															FROM chat_message cm
+															JOIN member_tbl m 
+																ON (m.member_id = cm.from_user_id OR m.member_id = cm.to_user_id)
+																AND m.member_id != '".$_SESSION['member_id']."' 
+															LEFT JOIN member_detail_tbl md ON m.member_id = md.member_id
+															LEFT JOIN member_qualification_tbl mq ON md.member_detail_id = mq.member_detail_id
+															LEFT JOIN lifestyle_tbl l ON md.member_detail_id = l.member_detail_id
+															LEFT JOIN city_tbl c ON m.member_city = c.city_id
+															LEFT JOIN state_tbl s ON c.state_id = s.state_id
+															WHERE cm.from_user_id = '".$_SESSION['member_id']."' 
+															   OR cm.to_user_id = '".$_SESSION['member_id']."'";--> 
+											<?php
+												$query ="SELECT DISTINCT m.*, md.*, mq.*, l.*, c.city_name, s.state_name
+												FROM chat_message cm
+												JOIN member_tbl m 
+													ON (m.member_id = cm.from_user_id OR m.member_id = cm.to_user_id)
+													AND m.member_id != '".$_SESSION['member_id']."' 
+												LEFT JOIN member_detail_tbl md ON m.member_id = md.member_id
+												LEFT JOIN member_qualification_tbl mq ON md.member_detail_id = mq.member_detail_id
+												LEFT JOIN lifestyle_tbl l ON md.member_detail_id = l.member_detail_id
+												LEFT JOIN city_tbl c ON m.member_city = c.city_id
+												LEFT JOIN state_tbl s ON c.state_id = s.state_id
+												WHERE (cm.from_user_id = '".$_SESSION['member_id']."' OR cm.to_user_id = '".$_SESSION['member_id']."')
+												AND m.member_status = 1";
+												//echo $query;die;
+												$data = mysqli_query($conn, $query);
+
+												while ($row = mysqli_fetch_assoc($data)) 
+												{
+											?>
+												<li>
+													<div class="db-int-pro-1">
+														<a href="profile_details.php?member_id=<?php echo $row['member_id']; ?>&religion=<?php echo $row['member_religion']; ?>&gen=<?php echo $row['member_gender']; ?>&city=<?php echo $row['member_city']; ?>">
+															<img src="member_profiles/<?php echo $row['member_image']; ?>" alt="">
+														</a>
+													</div>
+													<div class="db-int-pro-2">
+														<a href="profile_details.php?member_id=<?php echo $row['member_id']; ?>&religion=<?php echo $row['member_religion']; ?>&gen=<?php echo $row['member_gender']; ?>&city=<?php echo $row['member_city']; ?>">
+															<h5><?php echo ucfirst($row['member_lastname']) . " " . ucfirst($row['member_firstname']);?></h5> <span><?php echo ucfirst($row['city_name']) . " ," . ucfirst($row['state_name']);?></span>
+														</a>
+													</div>
+												</li>
+											<?php
+												}
+											?>
+										</ul>
+									</div>
+								</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- END -->
+	
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/slick.js"></script>
+    <script src="js/select-opt.js"></script>
+    <script src="js/Chart.js"></script>
+    <script src="js/custom.js"></script>
+	
+	<!--<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick.css"/>	
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick.min.js"></script>-->
+
+	
+	 <!-- FOOTER -->
+	<?php
+	include_once 'footer.php';
+	?>
+    <!-- END -->
+    <!-- COPYRIGHTS -->
+    <!-- END -->
+	
+    <script>
+    .slider {
+		display: flex;
+		flex-wrap: nowrap;
+		overflow: hidden;
+	}
+
+	.slider .slick-slide {
+		display: flex !important;
+		justify-content: center;
+		align-items: center;
+		padding: 10px;
+	}
+
+	.db-new-pro {
+		background: #fff;
+		border-radius: 10px;
+		padding: 15px;
+		box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+		width: 100%;
+		text-align: center;
+	}
+	
+	$(document).ready(function(){
+		$('.slider').slick({
+			slidesToShow: 4,  // Make sure enough slides are visible
+			slidesToScroll: 1,
+			infinite: true,
+			dots: true,
+			arrows: true,
+			autoplay: true,
+			autoplaySpeed: 3000,
+			responsive: [
+				{ breakpoint: 1024, settings: { slidesToShow: 3 } },
+				{ breakpoint: 768, settings: { slidesToShow: 2 } },
+				{ breakpoint: 480, settings: { slidesToShow: 1 } }
+			]
+		});
+	});
+
+
+    $('.count').each(function () {
+		$(this).prop('Counter',0).animate({
+			Counter: $(this).text()
+		}, {
+			duration: 4000,
+			easing: 'swing',
+			step: function (now) {
+				$(this).text(Math.ceil(now));
+			}
+		});
+	});
+
+	var xValues = "0";
+    var yValues = "50";
+
+    new Chart("Chart_leads", {
+        type: "line",
+        data: {
+            labels: xValues,
+            datasets: [{
+                fill: false,
+                lineTension: 0,
+                backgroundColor: "#f1bb51",
+                borderColor: "#fae9c8",
+                data: yValues
+            }]
+        },
+        options: {
+            responsive: true,
+            legend: {display: false},
+            scales: {
+                yAxes: [{ticks: {min: 0, max: 100}}]
+            }
+        }
+    });
+    </script>
+</body>
+
+
+<!-- Dream Class By user-interests.php  [XR&CO'2014], Fri, 14 Feb 2025 06:49:32 GMT -->
+<script>
+$(document).on("click", ".accept-btn", function () {
+    var button = $(this); // Store button reference
+    var loggedMemberId = button.data("logged-id");
+    var acceptedMemberId = button.data("accepted-id");
+    var request_id = button.data("request-id");
+
+    $.ajax({
+        url: "accept_friend.php",
+        type: "POST",
+        data: {
+            logged_member_id: loggedMemberId,
+            accepted_member_id: acceptedMemberId,
+            request_id: request_id
+        },
+        success: function (response) {
+            if (response == "success") {
+                button.text("Accepted")
+                      .removeClass("btn-success")
+                      .addClass("btn-secondary")
+                      .prop("disabled", true);
+
+                // ✅ Reload New Requests tab
+                $('#menu1').load(location.href + " #menu1>*");
+
+                // ✅ Reload Friend List tab
+                $('#menu2').load(location.href + " #menu2>*", function () {
+                    // ✅ Then activate Friend List tab
+                    var triggerEl = document.querySelector('[data-bs-toggle="tab"][href="#menu2"]');
+                    if (triggerEl) {
+                        var tab = new bootstrap.Tab(triggerEl);
+                        tab.show();
+                    }
+                });
+            } else {
+                alert("Error: " + response);
+            }
+        }
+    });
+});
+</script>
+</html>

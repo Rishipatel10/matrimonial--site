@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<?php
+	include_once 'connection.php';
+	
+	if(isset($_POST['btnSubmit']))
+	{
+		$str="select * from admin_tbl where admin_email='".$_POST['email']."' and admin_password='".$_POST['pass']."'";
+        $res=mysqli_query($conn,$str);
+        $cnt=mysqli_num_rows($res);
+		$data=mysqli_fetch_array($res);
+		if($cnt > 0)
+		{
+			$_SESSION["id"]=$data['admin_id'];
+			$_SESSION["name"]=$data['admin_name'];
+			$_SESSION["profile"]=$data['admin_profile'];
+			$_SESSION["Email"]=$data['admin_email'];
+			if(isset($_POST['check']))
+			{	
+				setcookie("admin_email",$_POST['email'],time()+(60*2));
+				setcookie("admin_pass",$_POST['pass'],time()+(60*2));
+			}		 
+			else
+			{
+				if(isset($_COOKIE["admin_email"]))
+				{
+					setcookie("admin_email","");
+				}
+				if(isset($_COOKIE["admin_pass"]))
+				{
+					setcookie("admin_pass","");
+				} 
+			}
+			header('location:dashboard.php');
+		}
+		else
+		{
+			$warning="<span style='color:red;font-size: 20px;'>Incorrect Email or Password!!</span>";
+		}	
+	}
+?>
+<html class="loading" lang="en" data-textdirection="ltr">
+	<!-- BEGIN: Head-->
+	<!-- /auth-login.html by,  04:44:35 GMT -->
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+		<meta name="description" content="Frest admin is super flexible, powerful, clean &amp; modern responsive bootstrap 4 admin template with unlimited possibilities.">
+		<meta name="keywords" content="admin template, Frest admin template, dashboard template, flat admin template, responsive admin template, web app">
+		<meta name="author" content="PIXINVENT">
+		<title>Admin Login | <?php echo $WEB_TITLE;?></title>
+		<link rel="apple-touch-icon" href="app-assets/images/ico/apple-icon-120.html">
+		<link rel="shortcut icon" type="image/x-icon" href="https://www.pixinvent.com/demo/frest-clean-bootstrap-admin-dashboard-template/app-assets/images/ico/favicon.ico">
+		<link href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,600%7CIBM+Plex+Sans:300,400,500,600,700" rel="stylesheet">
+
+		<!-- BEGIN: Vendor CSS-->
+		<link rel="stylesheet" type="text/css" href="app-assets/vendors/css/vendors.min.css">
+		<!-- END: Vendor CSS-->
+
+		<!-- BEGIN: Theme CSS-->
+		<link rel="stylesheet" type="text/css" href="app-assets/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="app-assets/css/bootstrap-extended.min.css">
+		<link rel="stylesheet" type="text/css" href="app-assets/css/colors.min.css">
+		<link rel="stylesheet" type="text/css" href="app-assets/css/components.min.css">
+		<link rel="stylesheet" type="text/css" href="app-assets/css/themes/dark-layout.min.css">
+		<link rel="stylesheet" type="text/css" href="app-assets/css/themes/semi-dark-layout.min.css">
+		<!-- END: Theme CSS-->
+
+		<!-- BEGIN: Page CSS-->
+		<link rel="stylesheet" type="text/css" href="app-assets/css/core/menu/menu-types/vertical-menu.min.css">
+		<link rel="stylesheet" type="text/css" href="app-assets/css/pages/authentication.css">
+		<!-- END: Page CSS-->
+
+		<!-- BEGIN: Custom CSS-->
+		<link rel="stylesheet" type="text/css" href="assets/css/style.css">
+		<!-- END: Custom CSS-->
+	</head>
+	<!-- END: Head-->
+	<!-- BEGIN: Body-->
+	<body class="vertical-layout vertical-menu-modern boxicon-layout no-card-shadow 1-column  navbar-sticky footer-static bg-full-screen-image  blank-page" data-open="click" data-menu="vertical-menu-modern" data-col="1-column">
+	
+	<!-- BEGIN: Content-->
+	<div class="app-content content">
+		<div class="content-overlay"></div>
+		<div class="content-wrapper">
+			<div class="content-header row"></div>
+			<div class="content-body"><!-- login page start -->
+				<section id="auth-login" class="row flexbox-container">
+					<div class="col-xl-8 col-11">
+						<div class="card bg-authentication mb-0">
+							<div class="row m-0">
+								<!-- left section-login -->
+								<div class="col-md-6 col-12 px-0">
+									<div class="card disable-rounded-right mb-0 p-2 h-100 d-flex justify-content-center">
+										<div class="card-header pb-1">	   
+											<div class="card-title">
+												<h4 class="text-center mb-2">Welcome Back</h4>	 
+											</div>
+										</div>
+										<div class="card-body">
+											<div class="divider">
+												<small>
+													<?php
+														if(isset($warning))
+														{
+															echo $warning;
+														}
+													 ?>		
+												</small>									
+											</div>
+											<form method="POST" >
+												<div class="form-group mb-50">
+													<label class="text-bold-600" for="exampleInputEmail1">Email address</label>
+													<input type="email"  name="email" class="form-control" id="exampleInputEmail1"  value="<?php if(isset($_COOKIE["admin_email"])){echo $_COOKIE["admin_email"];}?>" placeholder="Email address"></div>
+												<div class="form-group">
+													<label class="text-bold-600" for="exampleInputPassword1">Password</label>
+													<input type="password" name="pass" class="form-control"  value="<?php if(isset($_COOKIE["admin_pass"])){echo $_COOKIE["admin_pass"];}?>" id="exampleInputPassword1" placeholder="Password">
+												</div>
+												<div class="form-group d-flex flex-md-row flex-column justify-content-between align-items-center">
+													<div class="text-left">
+														<div class="checkbox checkbox-sm">
+															<input type="checkbox" <?php if(isset($_COOKIE["admin_pass"])){ echo 'checked';}?> class="form-check-input" name="check" id="exampleCheck1">
+															<label class="checkboxsmall" for="exampleCheck1"><small>Keep me logged in</small></label>
+														</div>
+													</div>
+													<div class="text-right"><a href="forgot_password.php" class="card-link"><small>Forgot Password?</small></a>
+													</div>
+															
+												</div>
+												
+												<button type="submit" name="btnSubmit" class="btn btn-primary glow w-100 position-relative">Login
+												<i id="icon-arrow" class="bx bx-right-arrow-alt"></i></button>
+											</form>
+											<!-- <hr>
+											<div class="text-center"><small class="mr-25">Don't have an account?</small><a
+													href="auth-register.html"><small>Sign up</small></a></div> -->
+										</div>
+									</div>
+								</div>
+								<!-- right section image -->
+								<div class="col-md-6 d-md-block d-none text-center align-self-center p-3">
+									<img id="gif"  src="app-assets/images/pages/Proposal.gif" width="532px" height="416px" Style=" position: absolute;bottom: 19.5px;left:-40.9px;height: 455px;width: 541px;top: -183px;" loop=infinite/>
+									<script>
+										// Function to reload the GIF
+										function resetGif() {
+											const gif = document.getElementById('gif');
+											gif.src = gif.src.split("?")[0] + "?cachebuster=" + new Date().getTime();
+										}
+										// Call the function to reset the GIF on page load
+										window.onload = resetGif;
+									</script>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+				<!-- login page ends -->
+			</div>
+		</div>
+	</div>
+	<!-- END: Content-->
+
+
+    <!-- BEGIN: Vendor JS-->
+    <script src="app-assets/vendors/js/vendors.min.js"></script>
+    <script src="app-assets/fonts/LivIconsEvo/js/LivIconsEvo.tools.min.js"></script>
+    <script src="app-assets/fonts/LivIconsEvo/js/LivIconsEvo.defaults.min.js"></script>
+    <script src="app-assets/fonts/LivIconsEvo/js/LivIconsEvo.min.js"></script>
+    <!-- BEGIN Vendor JS-->
+
+    <!-- BEGIN: Page Vendor JS-->
+	<script src="app-assets/vendors/js/tables/datatable/jquery.dataTables.min.js"></script>
+    <script src="app-assets/vendors/js/tables/datatable/dataTables.bootstrap4.min.js"></script>
+    <script src="app-assets/vendors/js/tables/datatable/dataTables.buttons.min.js"></script>
+    <script src="app-assets/vendors/js/tables/datatable/buttons.html5.min.js"></script>
+    <script src="app-assets/vendors/js/tables/datatable/buttons.print.min.js"></script>
+    <script src="app-assets/vendors/js/tables/datatable/buttons.bootstrap4.min.js"></script>
+    <script src="app-assets/vendors/js/tables/datatable/pdfmake.min.js"></script>
+    <script src="app-assets/vendors/js/tables/datatable/vfs_fonts.js"></script>
+    <!-- END: Page Vendor JS-->
+
+    <!-- BEGIN: Theme JS-->
+    <script src="app-assets/js/core/app-menu.min.js"></script>
+    <script src="app-assets/js/core/app.min.js"></script>
+    <script src="app-assets/js/scripts/components.min.js"></script>
+    <script src="app-assets/js/scripts/footer.min.js"></script>
+    <!-- END: Theme JS-->
+
+    <!-- BEGIN: Page JS-->
+    <!-- END: Page JS-->
+	</body>
+	<!-- END: Body-->
+
+<!-- /auth-login.html by,  04:44:35 GMT -->
+</html>

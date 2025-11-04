@@ -1,0 +1,481 @@
+<?php
+	include_once 'connection.php';
+?>
+<!doctype html>
+<html lang="en">
+
+<!-- Dream Class By about.html  [XR&CO'2014], Fri, 14 Feb 2025 06:49:13 GMT -->
+<head>
+	<title><?php echo $WEB_TITLE; ?></title>
+    <!--== META TAGS ==-->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="theme-color" content="#f6af04">
+    <meta name="description" content="">
+    <meta name="keyword" content="">
+    <!--== FAV ICON(BROWSER TAB ICON) ==-->
+    <link rel="shortcut icon" href="images/fav.ico" type="image/x-icon">
+    <!--== CSS FILES ==-->
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/animate.min.css">
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+      <script src="js/respond.min.js"></script>
+      <![endif]-->
+</head>
+
+<body>
+    <!-- PRELOADER -->
+    <!-- END PRELOADER -->
+
+    <!-- SEARCH -->
+    <!-- END PRELOADER -->
+
+    <!-- HEADER & MENU -->
+	   <?php include_once 'header.php';?>
+    <!-- END HEADER & MENU -->
+
+    <!-- HEADER & MENU -->
+    
+    <!-- END HEADER & MENU -->
+
+    <!-- HEADER & MENU -->
+          <?php include_once 'menu.php' ;?>
+    <!-- END MOBILE MENU POPUP -->
+
+    <!-- MOBILE USER PROFILE MENU POPUP -->
+    <!-- END USER PROFILE MENU POPUP -->
+
+    <!-- BANNER -->
+    <section>
+        <div class="str">
+            <div class="ban-inn ab-ban">
+                <div class="container">
+                    <div class="row">
+                        <div class="hom-ban">
+                            <div class="ban-tit">
+                                <span><i class="no1"></i> Vivahmilan</span>
+                                <h1>About us</h1>
+                                <p>Most Trusted and premium Matrimony Service in the World.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- END -->
+
+    <!-- START -->
+    <section>
+        <div class="ab-sec2">
+            <div class="container">
+                <div class="row">
+                    <ul>
+                        <li>
+                            <div>
+                                <img src="images/icon/prize.png" alt="">
+                                <h4>Genuine profiles</h4>
+                                <p>The most trusted wedding matrimony brand</p>
+                            </div>
+                        </li>
+                        <li>
+                            <div>
+                                <img src="images/icon/trust.png" alt="">
+                                <h4>Most trusted</h4>
+                                <p>The most trusted wedding matrimony brand</p>
+                            </div>
+                        </li>
+                        <li>
+                            <div>
+                                <img src="images/icon/rings.png" alt="">
+                                <?php 
+									$str="SELECT count(member_id) as member_count FROM testimonial_tbl";
+									$count=mysqli_query($conn,$str);
+									$test_member=mysqli_fetch_array($count);
+								?>
+								<h4><?php echo $test_member['member_count'] . "+ Weddings "; ?></h4>
+                                <p>The most trusted wedding matrimony brand</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- END -->
+
+    <!-- START -->
+    <section>
+        <div class="ab-wel">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="ab-wel-lhs">
+                            <span class="ab-wel-3"></span>
+                            <img src="images/about/Index1.jpg" alt="" loading="lazy" class="ab-wel-1">
+                            <img src="images/couples/Index9.jpg" alt="" loading="lazy" class="ab-wel-2">
+                            <span class="ab-wel-4"></span>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="ab-wel-rhs">
+                            <div class="ab-wel-tit">
+                                <h2>Welcome to <em>Vivahmilan</em></h2>
+                                <p>we believe that every love story is unique, and finding your perfect match should be a journey filled with joy, excitement, and trust.</p>
+                               
+                            </div>
+                            <div class="ab-wel-tit-1">
+                                <p>
+									Our platform is designed to bring together individuals seeking a meaningful and lifelong connection, making the path to love smoother and more fulfilling.
+									Join our ever-growing community of hopeful romantics and let Vivahmilan be the bridge to your happily ever after. Love is just a click away—start your journey today!
+								</p>
+                            </div>
+                            <div class="ab-wel-tit-2">
+                                <ul>
+                                    <li>
+                                        <div>
+                                            <i class="fa fa-phone" aria-hidden="true"></i>
+                                            <h4>Enquiry <em>+91 99986 75436</em></h4>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div>
+                                            <i class="fa fa-envelope-o" aria-hidden="true"></i>
+                                            <h4>Get Support <em>vivaahmilan123@gmail.com</em></h4>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- END -->
+
+    <!-- START -->
+    <section>
+        <div class="ab-cont">
+            <div class="container">
+                <div class="row">
+                    <ul>
+                        <li>
+                            <div class="ab-cont-po">
+                                <i class="fa fa-heart-o" aria-hidden="true"></i>
+                                <div>
+                                    <?php 
+										$str="SELECT count(member_id) as happy_member FROM testimonial_tbl";
+										$count=mysqli_query($conn,$str);
+										$member_rev=mysqli_fetch_array($count);
+									?>
+                                    <h4><?php echo $member_rev['happy_member'];?></h4>
+                                    <span>Couples pared</span>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="ab-cont-po">
+                                <i class="fa fa-users" aria-hidden="true"></i>
+                                <div>
+									<?php 
+										$str="SELECT count(member_id) as total_member FROM member_tbl";
+										$count=mysqli_query($conn,$str);
+										$register_member=mysqli_fetch_array($count);
+									?>
+                                    <h4><?php echo $register_member['total_member'];?></h4>
+                                    <span>Registerents</span>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="ab-cont-po">
+                                <i class="fa fa-male" aria-hidden="true"></i>
+                                <div>
+									<?php 
+										$str="SELECT count(member_id) as total_male FROM member_tbl where member_gender='Male'";
+										$count=mysqli_query($conn,$str);
+										$male_member=mysqli_fetch_array($count);
+									?>
+                                    <h4><?php echo $male_member['total_male'];?></h4>
+                                    <span>Mens</span>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="ab-cont-po">
+                                <i class="fa fa-female" aria-hidden="true"></i>
+                                <div>
+                                    <?php 
+										$str="SELECT count(member_id) as total_female FROM member_tbl where member_gender='Female'";
+										$count=mysqli_query($conn,$str);
+										$female_member=mysqli_fetch_array($count);
+									?>
+                                    <h4><?php echo $female_member['total_female'];?></h4>
+                                    <span>Womens</span>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- END -->
+
+    <!-- RECENT COUPLES -->
+    <section>
+        <div class="hom-partners abo-partners" id="testimonials">
+            <div class="container">
+                <div class="row">
+                    <!-- SUB TITLE -->
+                    <div class="sub-tit-caps">
+                        <h2>Customer <span class="animate animate__animated" data-ani="animate__flipInX"
+                                data-dely="0.1">Testimonials</span></h2>
+                        <p>Fusce imperdiet ullamcorper fringilla.</p>
+                    </div>
+
+                    <!-- TESTMONIAL BACKGROUND SHAPES -->
+                    <div class="wedd-shap">
+                        <span class="abo-shap-1"></span>
+                        <span class="abo-shap-3"></span>
+                    </div>
+
+                    <!-- SLIDER START -->
+                    <div id="demo" class="carousel slide" data-ride="carousel">
+                        <!-- Wrapper for slides -->
+                        <div class="carousel-inner">
+							<div class="carousel-item active">
+								<ul>
+									<?php
+										$str="select* from member_tbl,member_detail_tbl,lifestyle_tbl,member_qualification_tbl,testimonial_tbl 
+										where member_detail_tbl.member_id=member_tbl.member_id and 
+											testimonial_tbl.member_id=member_tbl.member_id and 
+											lifestyle_tbl.member_detail_id=member_detail_tbl.member_detail_id and 
+											member_qualification_tbl.member_detail_id=member_detail_tbl.member_detail_id and member_tbl.member_status='1' and testimonial_tbl.testimonial_status='1'";
+										$data=mysqli_query($conn,$str);
+										
+										while($row=mysqli_fetch_array($data))
+										{
+									?>
+                                    <li>
+                                        <div class="ab-testmo">
+                                            <div class="ab-test-rat">
+                                                <div class="ab-test-star">
+                                                    <?php
+														$rating = (int)$row['rating']; // Ensure rating is an integer
+														for ($i = 1; $i <= 5; $i++) {
+															if ($i <= $rating) {
+																echo '<i class="fa fa-star" aria-hidden="true"></i>';
+															} else {
+																echo '<i class="fa fa-star-o" aria-hidden="true"></i>';
+															}
+														}
+													?>
+                                                    <div class="ab-test-conte">
+														<p><?php echo ucfirst($row['testimonial_description']); ?></p>
+													</div>
+												</div>
+												<div class="ab-rat-user">
+													<img src="member_profiles/<?php echo $row['member_image']; ?>" alt="">
+													<div>
+														<h4><?php echo ucfirst($row['member_lastname']) . " " . ucfirst($row['member_firstname']); ?></h4>
+														<span><?php echo ucfirst($row['member_occupation']); ?></span>
+													</div>
+												</div>
+											</div>
+										</div>
+                                    </li>
+									<?php 
+										}
+									?>
+								</ul>
+							</div> 
+                        </div>
+                        <!-- Left and right controls -->
+                        <a class="carousel-control-prev" href="#demo" data-slide="prev">
+                            <span class="carousel-control-prev-icon"></span>
+                        </a>
+                        <a class="carousel-control-next" href="#demo" data-slide="next">
+                            <span class="carousel-control-next-icon"></span>
+                        </a>
+					</div>
+				</div>
+			</div>
+		</div>
+    </section>
+    <!-- END -->
+
+
+    <!-- START -->
+    <section>
+        <div class="ab-team pg-abo-ab-team">
+            <div class="container">
+                <div class="row">
+                    <div class="home-tit">
+                        <p>OUR PROFESSIONALS</p>
+                        <h2><span>Meet Our Team</span></h2>
+                        <span class="leaf1"></span>
+                    </div>
+                    <ul>
+                        <li>
+                            <div>
+                                <img src="images/rishi1.jpg"  style="width: 313px;" alt="" loading="lazy">
+                                <h4>Rishi Patel</h4>
+                                <p>Developer</p>
+                                <!--<ul class="social-light">
+                                    <li><a href="#!"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+                                    <li><a href="#!"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+                                    <li><a href="#!"><i class="fa fa-whatsapp" aria-hidden="true"></i></a></li>
+                                    <li><a href="#!"><i class="fa fa-linkedin" aria-hidden="true"></i></a></li>
+                                    <li><a href="#!"><i class="fa fa-instagram" aria-hidden="true"></i></a></li>
+                                </ul>-->
+                            </div>
+                        </li>
+                        <li>
+                            <div>
+                                <img src="images/sumeet.jpeg" style="width: 313px;" alt="" loading="lazy">
+                                <h4>Sumeet Pandey</h4>
+                                <p>Designer</p>
+                                <!--<ul class="social-light">
+                                    <li><a href="#!"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+                                    <li><a href="#!"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+                                    <li><a href="#!"><i class="fa fa-whatsapp" aria-hidden="true"></i></a></li>
+                                    <li><a href="#!"><i class="fa fa-linkedin" aria-hidden="true"></i></a></li>
+                                    <li><a href="#!"><i class="fa fa-instagram" aria-hidden="true"></i></a></li>
+                                </ul>-->
+                            </div>
+                        </li>
+                        <li>
+                            <div>
+                                <img src="images/rohan.jpg" style="width: 313px;" alt="" loading="lazy">
+                                <h4>Rohan Rajput</h4>
+                                <p>Tester</p>
+                                <!--<ul class="social-light">
+                                    <li><a href="#!"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+                                    <li><a href="#!"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+                                    <li><a href="#!"><i class="fa fa-whatsapp" aria-hidden="true"></i></a></li>
+                                    <li><a href="#!"><i class="fa fa-linkedin" aria-hidden="true"></i></a></li>
+                                    <li><a href="#!"><i class="fa fa-instagram" aria-hidden="true"></i></a></li>
+                                </ul>-->
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- END -->
+
+    <!-- START -->
+    <section>
+        <div class="ab-faq" id="faq">
+
+            <div class="container">
+                <div class="row">
+                    <!-- SUB TITLE -->
+                    <div class="sub-tit-caps">
+                        <h2>KB <span class="animate animate__animated" data-ani="animate__flipInX"
+                                data-dely="0.1">knowledge base</span></h2>
+                        <p>Fusce imperdiet ullamcorper fringilla.</p>
+                    </div>
+                    <!-- TESTMONIAL BACKGROUND SHAPES -->
+                    <div class="wedd-shap">
+                        <span class="abo-shap-1"></span>
+                        <span class="abo-shap-2"></span>
+                        <span class="abo-shap-4"></span>
+                        <span class="abo-shap-5"></span>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="ab-faq-lhs">
+                            <div id="accordion">
+								<script>
+									// Wait for the DOM to be ready
+									document.addEventListener("DOMContentLoaded", function () {
+										let links = document.querySelectorAll("#accordion .card-link");
+
+										links.forEach(link => {
+											link.addEventListener("click", function () {
+												let icon = this.querySelector(".icon");
+												let isExpanded = this.getAttribute("aria-expanded") === "true";
+
+												// Reset all icons to "+"
+												document.querySelectorAll(".icon").forEach(i => i.innerText = "+");
+
+												// If the clicked item is expanding, change its icon to "-"
+												if (!isExpanded) {
+													icon.innerText = "-";
+												}
+											});
+										});
+									});
+								</script>
+
+								<!-- Bootstrap CSS & JS (Include in your page) -->
+								<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+								<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+								<?php
+									
+									$str="select * from faq_tbl";
+									$show=mysqli_query($conn,$str);
+									$count = 1;
+									
+									while ($row = mysqli_fetch_array($show)) 
+									{
+										$collapseId = "collapse" . $count;
+								?>
+                                <div class="card">
+                                    <div class="card-header">
+                                        <a class="card-link" data-toggle="collapse" href="#<?php echo $collapseId; ?>">
+                                            <?php echo ucfirst($row['faq_que']); ?>
+											<!--<span class="icon">+</span>-->
+                                        </a>
+                                    </div>
+                                    <div id="<?php echo $collapseId; ?>" class="collapse" data-parent="#accordion">
+                                        <div class="card-body">
+                                            <p><?php echo ucfirst($row['faq_ans']); ?></p>
+                                        </div>
+                                    </div>
+                                </div>
+								<?php
+									$count++;
+									}
+								?>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="ab-faq-rhs">
+                            <img src="images/about/Index3.jpg" alt="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- END -->
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/custom.js"></script>
+	
+	<!-- FOOTER -->
+        <?php include_once 'footer.php';?>
+    <!-- END -->
+    <!-- COPYRIGHTS -->
+    <!-- END -->
+</body>
+
+
+<!-- Dream Class By about.html  [XR&CO'2014], Fri, 14 Feb 2025 06:49:14 GMT -->
+</html>

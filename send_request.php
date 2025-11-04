@@ -1,0 +1,485 @@
+<?php
+	include_once 'connection.php';
+	
+	if(!isset($_SESSION['member_id'])){
+	   header('location:login.php');
+	}
+?>
+<!doctype html>
+<html lang="en">
+
+
+<!-- Dream Class By all-profiles.html  [XR&CO'2014], Fri, 14 Feb 2025 06:49:11 GMT -->
+<head>
+    <title><?php echo $WEB_TITLE; ?></title>
+    <!--== META TAGS ==-->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="theme-color" content="#f6af04">
+    <meta name="description" content="">
+    <meta name="keyword" content="">
+    <!--== FAV ICON(BROWSER TAB ICON) ==-->
+    <link rel="shortcut icon" href="images/fav.ico" type="image/x-icon">
+    <!--== CSS FILES ==-->
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/animate.min.css">
+    <link rel="stylesheet" href="css/style.css">
+	<style>
+    .profile-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+    }
+    .profile-table td {
+        padding: 8px;
+        border-bottom: 1px solid #ddd;
+    }
+    .profile-table tr:last-child td {
+        border-bottom: none;
+    }
+    .profile-table td:first-child {
+        font-weight: bold;
+        color: #555;
+        width: 40%;
+    }
+    .lock-icon {
+        color: darkred;
+        font-size: 18px;
+        text-decoration: none;
+    }
+	</style>	
+	
+<style>
+    #members {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        padding: 0;
+        list-style: none;
+    }
+
+    #members li {
+        width: 32%; /* Each profile box takes around 33% width */
+        margin-bottom: 20px;
+        box-sizing: border-box;
+    }
+
+    .all-pro-box {
+        text-align: center;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        background: #fff;
+		
+    }
+
+    .pro-img img {
+        width: 100%;
+        height: auto;
+        border-radius: 5px;
+    }
+</style>
+</head>
+
+<body>
+	<?php 
+		if (isset($_POST['Btnconnect'])) {		
+			$memberRequests = array();
+					foreach ($_POST['member_connectId'] as $memberId) {
+						$memberRequests[$memberId] = "pending"; // Default status is 'pending'
+					}
+					$send_ids = json_encode($memberRequests);
+
+					$req_datetime = date("Y-m-d H:i:s");
+					$member_id = $_SESSION['member_id'];
+
+					$query = "INSERT INTO send_request_tbl (member_id, send_request_id, request_date) 
+							  VALUES ('$member_id', '$send_ids', '$req_datetime')";
+					$result = mysqli_query($conn, $query);
+
+					// ✅ Send notifications to each selected member
+					if ($result) {
+						foreach ($_POST['member_connectId'] as $to_member_id) {
+							$message = "You have received a new connection request from Member #$member_id";
+							$notify_query = "INSERT INTO notification_tbl (member_id, message, notification_type)
+											 VALUES ('$to_member_id', '$message', 'request_sent')";
+							mysqli_query($conn, $notify_query);
+						}
+
+						echo "<script>window.location='plans.php';</script>";
+					} else {
+						echo "<script>alert('Something went wrong, please try again.');</script>";
+					}
+		}
+	?>
+    <!-- PRELOADER -->
+    <!-- END PRELOADER -->
+
+    <!-- SEARCH -->
+    <!-- END PRELOADER -->
+
+    <!-- HEADER & MENU -->
+    <?php
+		include_once 'header.php';
+	?>
+    <!-- END HEADER & MENU -->
+
+    <!-- HEADER & MENU -->
+    <!-- END HEADER & MENU -->
+
+    <!-- HEADER & MENU -->
+    <?php
+		include_once 'menu.php';
+	?>
+    <!-- END MOBILE MENU POPUP -->
+
+    <!-- MOBILE USER PROFILE MENU POPUP -->
+    
+    <!-- END USER PROFILE MENU POPUP -->
+
+    <!-- SUB-HEADING -->
+    <section>
+        <div class="all-pro-head">
+            <div class="container">
+                <div class="row">
+                    <h1>Lakhs of Happy Marriages</h1>
+                    <!--<a href="sign_up.php">Join now for Free <i class="fa fa-handshake-o" aria-hidden="true"></i></a>-->
+                </div>
+            </div>
+        </div>
+        <!--FILTER ON MOBILE VIEW-->
+        <div class="fil-mob fil-mob-act">
+            <h4>Profile filters <i class="fa fa-filter" aria-hidden="true"></i> </h4>
+        </div>
+    </section>
+    <!-- END -->
+
+    <!-- START -->
+    <section>
+
+        <div class="all-weddpro all-jobs all-serexp chosenini">
+		
+		<form method="POST"> 
+            <div class="container">
+					
+                <div class="row">
+				<div style="margin-left: 84%;margin-top:2%">
+				<input type="checkbox" id="mainCheckbox">&nbsp;&nbsp;<label>Unchecked to all</label>
+				</div>
+                    <div class="col-md-6">   
+                        <div class="all-list-sh view-grid">
+						
+                            <ul id="members" style="width:1284px">
+							   	<?php 
+									$member_DBgender="select * from member_tbl where member_id='".$_SESSION['member_id']."' AND member_status = '1'";
+									$res_gender=mysqli_query($conn,$member_DBgender);
+									$row_gender=mysqli_fetch_array($res_gender);          
+									$member_gender=$row_gender['member_looking_for'];
+									//echo "hi".$member_gender;die;
+									if($member_gender=="Female")
+									{
+										$member_gender="Male";
+									}
+									else
+									{
+										$member_gender="Female";
+									}
+									$str="select * from member_tbl 
+									join member_detail_tbl on member_tbl.member_id=member_detail_tbl.member_id
+									where member_looking_for like '".$member_gender."' AND member_tbl.member_status = '1'";
+									//echo $str;
+									$res=mysqli_query($conn,$str);
+									while($row=mysqli_fetch_array($res))
+									{
+										//echo $row['member_id'];
+								?>
+									<li>
+										<div class="all-pro-box user-avil-onli" data-useravil="avilyes"
+											data-aviltxt="Available online">
+											<!--PROFILE IMAGE-->
+											<div class="pro-img">
+												<?php 
+													if(!empty($row['member_image']))
+													{ 
+												?>
+														<img src="member_profiles/<?php echo $row['member_image']; ?>" />
+												<?php 
+													}
+													else
+													{ 
+												?>
+														<img src="member_profiles/image_placeholder.jpg" />
+												<?php 
+													} 
+												?>  
+												<!--<div class="pro-ave" title="User currently available">
+													<span class="pro-ave-yes"></span>
+												</div>-->
+												<div class="pro-avl-status">
+													<?php
+														$last_log = "SELECT * FROM login_details WHERE user_id = '".$row['member_id']."' ORDER BY login_details_id desc" ;
+														//echo $last_log;
+														$data1 = mysqli_query($conn, $last_log);
+
+														if (!$data1) {
+															die("Query failed: " . mysqli_error($conn));
+														}
+
+														$logs = mysqli_fetch_assoc($data1);
+
+														if ($logs && isset($logs['last_activity'])) {
+															$last_activity = new DateTime($logs['last_activity']); // Convert to DateTime
+															$current_time = new DateTime(); // Current time
+															$interval = $last_activity->diff($current_time); // Calculate difference
+
+															// Debugging: Ensure correct format
+															//echo "Raw Last Activity Timestamp: " . $last_activity->format('Y-m-d H:i:s') . "<br>";
+
+															// Format the difference in a human-readable way
+															if ($interval->y > 0) {
+																$time_display = $interval->y . " year(s) ago";
+															} elseif ($interval->m > 0) {
+																$time_display = $interval->m . " month(s) ago";
+															} elseif ($interval->d > 0) {
+																$time_display = $interval->d . " day(s) ago";
+															} elseif ($interval->h > 0) {
+																$time_display = $interval->h . " hour(s) ago";
+															} elseif ($interval->i > 0) {
+																$time_display = $interval->i . " minute(s) ago";
+															} else {
+																$time_display = "Just now";
+															}
+														} else {
+															$time_display = "Login not done yet";
+														}
+														?>
+
+														<h5>Last login: <?php echo $time_display; ?></h5>
+
+													<!--<span class="marqu">Last login 10 mins ago | I'll be available on 10:00
+														AM</span>-->
+												</div>
+												<!--<div class="pro-ave" title="User currently available">
+													<span class="pro-ave-yes"></span>
+												</div>-->
+											</div>
+											<!--END PROFILE IMAGE-->
+
+											<!--PROFILE NAME-->
+											<div class="pro-detail" style="width:73%">
+										
+												<h4><?php echo ucfirst($row['member_firstname']) ." ". ucfirst($row['member_lastname']); ?></h4><input type="checkbox" name="member_connectId[]" value="<?php echo $row['member_id']; ?>" style="margin: -36px -106px  0 -123px;height: 45px;width: 20px;" class="checkbox01 subCheckbox" checked>
+												<div class="pro-bio" style="width:132%">
+													<table class="profile-table">
+														<tr>
+															<td>Age / Height:</td>
+															<td><?php echo $row['member_age'] . " Y / " . $row['member_height']." in"; ?></td>
+														</tr>
+														<tr>
+															<td>Religion:</td>
+															<td><?php echo ucfirst($row['member_religion']); ?></td>
+														</tr>
+														<tr>
+															<td>Marital Status:</td>
+															<td><?php echo ucfirst($row['marital_status']); ?></td>
+														</tr>
+													</table>
+													<!--<span><?php //echo ucfirst($row['member_rashi']);?></span>
+													<span><?php //echo ucfirst($row['member_weight']);?></span>
+													<span><?php //echo $row['member_age'];?></span>
+													<span><?php //echo $row['member_height'];?></span>-->
+												</div>
+											</div>
+											<!--END PROFILE NAME-->
+											<!--SAVE-->
+
+											<!--<span class="enq-sav" data-toggle="tooltip" title="Click to save this provile.">
+												<i class="fa fa-thumbs-o-up" aria-hidden="true"></i>
+											</span>-->
+											<!--END SAVE-->
+										</div>
+									</li>
+								<?php
+									}
+								?>
+                            </ul>
+							<div class="form-actions">
+								<input type="submit" id="edit-submit" style="border-radius: 17px;width: 750px;margin-left: 33%;background: #dcbcc5;height: 45px;" name="Btnconnect" value="Send Request to All" class="btn_1 submit"> 
+							</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+			</form>
+        </div>
+    </section>
+    <!-- END -->
+
+
+    <!-- INTEREST POPUP -->
+    <div class="modal fade" id="sendInter">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title seninter-tit">Send interest to <span class="intename2">Jolia</span></h4>
+                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body seninter">
+                    <div class="lhs">
+                        <img src="images/profiles/1.jpg" alt="" class="intephoto2">
+                    </div>
+                    <div class="rhs">
+                        <h4>Permissions: <span class="intename2">Jolia</span> Can able to view the below details</h4>
+                        <ul>
+                            <li>
+                                <div class="chbox">
+                                    <input type="checkbox" id="pro_about" checked="">
+                                    <label for="pro_about">About section</label>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="chbox">
+                                    <input type="checkbox" id="pro_photo">
+                                    <label for="pro_photo">Photo gallery</label>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="chbox">
+                                    <input type="checkbox" id="pro_contact">
+                                    <label for="pro_contact">Contact info</label>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="chbox">
+                                    <input type="checkbox" id="pro_person">
+                                    <label for="pro_person">Personal info</label>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="chbox">
+                                    <input type="checkbox" id="pro_hobbi">
+                                    <label for="pro_hobbi">Hobbies</label>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="chbox">
+                                    <input type="checkbox" id="pro_social">
+                                    <label for="pro_social">Social media</label>
+                                </div>
+                            </li>
+                        </ul>
+                        <div class="form-floating">
+                            <textarea class="form-control" id="comment" name="text"
+                                placeholder="Comment goes here"></textarea>
+                            <label for="comment">Write some message to <span class="intename"></span></label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary">Send interest</button>
+                    <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Cancel</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- END INTEREST POPUP -->
+
+    <!-- CHAT CONVERSATION BOX START -->
+    <div class="chatbox">
+        <span class="comm-msg-pop-clo"><i class="fa fa-times" aria-hidden="true"></i></span>
+
+        <div class="inn">
+            <form name="new_chat_form" method="post">
+                <div class="s1">
+                    <img src="images/user/2.jpg" class="intephoto2" alt="">
+                    <h4><b class="intename2">Julia</b>,</h4>
+                    <span class="avlsta avilyes">Available online</span>
+                </div>
+                <div class="s2 chat-box-messages">
+                    <span class="chat-wel">Start a new chat!!! now</span>
+                    <div class="chat-con">
+                        <div class="chat-lhs">Hi</div>
+                        <div class="chat-rhs">Hi</div>
+                    </div>
+                    <!--<span>Start A New Chat!!! Now</span>-->
+                </div>
+                <div class="s3">
+                    <input type="text" name="chat_message" placeholder="Type a message here.." required="">
+                    <button id="chat_send1" name="chat_send" type="submit">Send <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- END -->
+	
+			
+		
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/select-opt.js"></script>
+    <script src="js/custom.js"></script>
+	
+	<!-- FOOTER -->
+    <?php
+		include_once 'footer.php';
+	?>
+    <!-- END -->
+    <!-- COPYRIGHTS -->
+    <!-- END -->
+	
+	<script>
+		function get_member(val) {
+			//alert(val);
+			$.ajax({
+				type: "POST",
+				url: "get_member.php",
+				data:'city_id='+val,
+				success: function(data){
+					$("#members").html(data);
+				}
+			});
+		}
+	</script>
+	
+	<script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const mainCheckbox = document.getElementById("mainCheckbox");
+            const subCheckboxes = document.querySelectorAll(".subCheckbox");
+
+            mainCheckbox.addEventListener("change", function () {
+                subCheckboxes.forEach(checkbox => {
+                    checkbox.checked = !this.checked; // Invert state based on main checkbox
+                });
+            });
+
+            subCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener("change", function () {
+                    if (this.checked) {
+                        mainCheckbox.checked = false;
+                    } else {
+                        // If all sub-checkboxes are unchecked, check the main checkbox
+                        const allUnchecked = [...subCheckboxes].every(cb => !cb.checked);
+                        mainCheckbox.checked = allUnchecked;
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+
+</html>

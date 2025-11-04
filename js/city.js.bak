@@ -1,0 +1,57 @@
+let allCities = []; // Store all Indian cities
+
+        $(document).ready(function() {
+            // 🔄 Load all Indian cities on page load
+            $.ajax({
+                url: `https://secure.geonames.org/searchJSON`,
+                method: 'GET',
+                data: {
+                    country: 'IN',
+                    featureClass: 'P', // Only cities
+                    maxRows: 1000, // Fetch as many cities as possible
+                    username: '__solanki__abhi__' // Replace with your GeoNames username
+                },
+                success: function(data) {
+                    allCities = data.geonames.map(city => city.name); // Store city names
+                },
+                error: function() {
+                    console.log("Error fetching city data from GeoNames API.");
+                }
+            });
+
+            // 📝 Filter cities as user types
+            $('#city-input').on('keyup', function() {
+                let query = $(this).val().trim().toLowerCase();
+                let dropdown = $('#city-dropdown');
+                dropdown.empty().show();
+
+                if (query.length > 1) {
+                    let filteredCities = allCities.filter(city => 
+                        city.toLowerCase().includes(query)
+                    ).slice(0, 10); // Limit to 10 results
+
+                    if (filteredCities.length > 0) {
+                        filteredCities.forEach(cityName => {
+                            dropdown.append(`<div class='list-group-item' data-city='${cityName}'>${cityName}</div>`);
+                        });
+                    } else {
+                        dropdown.append(`<div class='list-group-item'>No results found</div>`);
+                    }
+                } else {
+                    dropdown.hide();
+                }
+            });
+
+            // ✅ Select city from dropdown
+            $(document).on('click', '.list-group-item', function() {
+                $('#city-input').val($(this).data('city'));
+                $('#city-dropdown').hide();
+            });
+
+            // ❌ Hide dropdown when clicking outside
+            $(document).click(function(event) {
+                if (!$(event.target).closest('.form-group').length) {
+                    $('#city-dropdown').hide();
+                }
+            });
+        });

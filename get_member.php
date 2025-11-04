@@ -1,0 +1,541 @@
+<?php
+    include_once 'connection.php';
+?>
+<html>
+	<head>
+		<style>
+			.table_working_hours tr.opened_1 td {
+			padding: 0 0 5px;
+			}
+			td.day_label {
+				padding:5px 0;
+			}
+			
+			.profile-table {
+				width: 100%;
+				border-collapse: collapse;
+				font-family: Arial, sans-serif;
+				font-size: 14px;
+				background: #fff;
+				border-radius: 8px;
+				overflow: hidden;
+				box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+			}
+			.profile-table td {
+				padding: 10px;
+				border-bottom: 1px solid #ddd;
+			}
+			.profile-table tr:last-child td {
+				border-bottom: none;
+			}
+			.profile-table td:first-child {
+				font-weight: bold;
+				color: #444;
+				width: 40%;
+			}
+			.lock-icon {
+				color: darkred;
+				font-size: 18px;
+				text-decoration: none;
+			}
+			.profile-container {
+				max-width: 400px;
+				margin: 10px auto;
+				background: #f9f9f9;
+				padding: 15px;
+				border-radius: 10px;
+			}
+
+			/* Container styling */
+			.verification-container
+				display: flex;
+				flex-direction: column;
+				background: #fff;
+				padding: 0px;
+				border-radius: 8px;
+				box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+				width: fit-content;
+				margin: 15px auto;
+				text-align: left;
+			}
+
+			/* Styling for verified box */
+			.verification-box {
+				display: flex;
+				align-items: center;
+				gap: 10px;
+				padding: 10px;
+				border-radius: 5px;
+				font-weight: bold;
+			}
+
+			/* Icons */
+			.verification-box i {
+				font-size: 18px;
+			}
+
+			/* Verified status */
+			.verified {
+				background: #e8f5e9;
+				color: #2e7d32;
+				border-left: 5px solid #2e7d32;
+			}
+
+			.verified i {
+				color: #2e7d32;
+			}
+
+			/* Not verified status */
+			.not-verified {
+				background: #ffebee;
+				color: #c62828;
+				border-left: 5px solid #c62828;
+			}
+
+			.not-verified i {
+				color: #c62828;
+			}
+
+			/* Additional text */
+			.verification-details {
+				font-size: 14px;
+				color: #555;
+				margin-left: 28px;
+			}
+			   .blurred-image {
+				filter: blur(20px);
+			}
+			.pro-img img {
+				width: 450px;
+				height: 450px;
+				object-fit:cover;
+			}
+		</style>
+	</head>
+		<body>
+		<?php
+			// Fetch logged-in member's age preference
+			$age_query = "SELECT member_min_age, member_max_age FROM member_tbl WHERE member_id = '".$_SESSION['member_id']."'";
+			$age_result = mysqli_query($conn, $age_query);
+			$age_row = mysqli_fetch_assoc($age_result);
+			$min_age = $age_row['member_min_age'];
+			$max_age = $age_row['member_max_age'];
+			
+			if(isset($_POST['m_id']))
+			{
+				$mid=$_POST['m_id'];
+				$str="Select * from member_tbl,member_detail_tbl,member_qualification_tbl,lifestyle_tbl where member_tbl.member_id=member_detail_tbl.member_id and member_detail_tbl.member_detail_id=member_qualification_tbl.member_detail_id and lifestyle_tbl.member_detail_id=member_detail_tbl.member_detail_id and member_tbl.member_id='".$mid."' and member_tbl.member_gender!='".$_SESSION['member_gender']."' AND member_tbl.member_status = 1";
+				
+			}
+			else if(isset($_POST['member_min_age']))
+			{
+				$minid=$_POST['member_min_age'];
+				$str="Select * from member_tbl,member_detail_tbl,member_qualification_tbl,lifestyle_tbl where member_tbl.member_id=member_detail_tbl.member_id and member_detail_tbl.member_detail_id=member_qualification_tbl.member_detail_id and lifestyle_tbl.member_detail_id=member_detail_tbl.member_detail_id and member_tbl.member_age>='".$minid."' and member_tbl.member_gender!='".$_SESSION['member_gender']."' AND member_tbl.member_status = 1";
+				
+			}
+			else if(isset($_POST['city_id']))
+			{
+				$cid=$_POST['city_id'];
+				$str="Select * from member_tbl,member_detail_tbl,member_qualification_tbl,lifestyle_tbl where member_tbl.member_id=member_detail_tbl.member_id and member_detail_tbl.member_detail_id=member_qualification_tbl.member_detail_id and lifestyle_tbl.member_detail_id=member_detail_tbl.member_detail_id and member_tbl.member_city='".$cid."' and member_tbl.member_gender!='".$_SESSION['member_gender']."' AND member_tbl.member_status = 1";
+				
+
+			}
+			else if(isset($_POST['member_religion']))
+			{
+				$rid=$_POST['member_religion'];
+				$str="Select * from member_tbl,member_detail_tbl,member_qualification_tbl,lifestyle_tbl where member_tbl.member_id=member_detail_tbl.member_id and member_detail_tbl.member_detail_id=member_qualification_tbl.member_detail_id and lifestyle_tbl.member_detail_id=member_detail_tbl.member_detail_id and member_detail_tbl.member_religion='".$rid."' and member_tbl.member_gender!='".$_SESSION['member_gender']."' AND member_tbl.member_status = 1";
+				
+			} 
+			else if(isset($_POST['member_status']))
+			{
+				$sid=$_POST['member_status'];
+				
+				if($sid == 1 || $sid == 0)
+				{												
+					$str="Select * from member_tbl,member_detail_tbl,member_qualification_tbl,lifestyle_tbl where member_tbl.member_id=member_detail_tbl.member_id and member_detail_tbl.member_detail_id=member_qualification_tbl.member_detail_id and lifestyle_tbl.member_detail_id=member_detail_tbl.member_detail_id and member_tbl.member_status='".$sid."' and member_tbl.member_gender!='".$_SESSION['member_gender']."' AND member_tbl.member_status = 1";
+				}
+				else 
+				{
+					$str="Select * from member_tbl,member_detail_tbl,member_qualification_tbl,lifestyle_tbl where member_tbl.member_id=member_detail_tbl.member_id and member_detail_tbl.member_detail_id=member_qualification_tbl.member_detail_id and lifestyle_tbl.member_detail_id=member_detail_tbl.member_detail_id and member_tbl.member_gender!='".$_SESSION['member_gender']."' AND member_tbl.member_status = 1";
+				}
+
+				
+			}
+			else if(isset($_POST['package']))
+			{
+				$pid=$_POST['package'];
+
+				if($pid == 1)
+				{
+					$str="Select * from member_tbl,member_detail_tbl,member_qualification_tbl,package_detail_tbl where member_tbl.member_id=member_detail_tbl.member_id and member_detail_tbl.member_detail_id=member_qualification_tbl.member_detail_id and package_detail_tbl.member_id=member_tbl.member_id and member_tbl.member_gender!='".$_SESSION['member_gender']."' AND member_tbl.member_status = 1";
+					
+				}
+				else if($pid==0)
+				{
+					$str="SELECT 
+							member_tbl.*, 
+							member_detail_tbl.*, 
+							member_qualification_tbl.*, 
+							lifestyle_tbl.*
+						FROM member_tbl
+						INNER JOIN member_detail_tbl 
+							ON member_tbl.member_id = member_detail_tbl.member_id
+						INNER JOIN member_qualification_tbl 
+							ON member_detail_tbl.member_detail_id = member_qualification_tbl.member_detail_id
+						INNER JOIN lifestyle_tbl 
+							ON lifestyle_tbl.member_detail_id = member_detail_tbl.member_detail_id
+						LEFT JOIN package_detail_tbl 
+							ON member_tbl.member_id = package_detail_tbl.member_id
+						WHERE package_detail_tbl.member_id IS NULL AND member_tbl.member_gender!='".$_SESSION['member_gender']."' AND member_tbl.member_status = 1";
+						
+				}
+				else if($pid==2)
+				{
+						$str="Select * from member_tbl,member_detail_tbl,member_qualification_tbl
+						where member_tbl.member_id=member_detail_tbl.member_id and member_detail_tbl.member_detail_id=member_qualification_tbl.member_detail_id
+						AND member_tbl.member_gender !='".$_SESSION['member_gender']."' AND member_tbl.member_status = 1";
+						
+				}
+				//echo $str;
+			}
+	
+
+		$data=mysqli_query($conn,$str);
+		//$total_profiles
+		$total_profiles=mysqli_num_rows($data);
+			//echo $total_profiles;
+			?>
+			<div  id="members">
+				<div class="short-all">
+					<div class="short-lhs">
+						Showing<b> <?php echo $total_profiles;?> </b> profiles
+					</div>
+				
+				</div>
+				<div class="all-list-sh">
+					<ul>
+						<?php
+							while ($row = mysqli_fetch_array($data)){
+								
+								$profile_id = $row['member_profile_id'];
+								$is_bookmarked = false;
+								$check_wishlist = "SELECT * FROM bookmark_profile_tbl WHERE member_id = '$_SESSION[member_id]' AND member_profile_id = '$profile_id'";
+								$wishlist_result = mysqli_query($conn, $check_wishlist);
+								if (mysqli_num_rows($wishlist_result) > 0) {
+									$is_bookmarked = true;
+								}
+						?>
+	
+			<li>
+				<div class="all-pro-box user-avil-onli" data-useravil="avilyes"
+					data-aviltxt="Available online">
+					<!--PROFILE IMAGE-->
+					<h6>Profile ID : <?php echo $row['member_profile_id']; ?>
+					<?php $matched = ($row['member_age'] >= $min_age && $row['member_age'] <= $max_age);?>
+					<span class="wishlist-icon" data-id="<?php echo $profile_id; ?>">
+						<i class="<?php echo $is_bookmarked ? 'fas fa-heart' : 'far fa-heart'; ?>"></i>
+					</span>
+					</h6>
+					<div class="pro-img">
+						<a href="profile_details.php?member_id=<?php echo $row['member_id']; ?>&Religion=<?php echo $row['member_religion']; ?>&gender=<?php echo $row['member_gender']; ?>&city=<?php echo $row['member_city']; ?>">
+						<?php 
+						//echo "<pre>";
+						//print_r($_SESSION);
+						?>
+						
+						<?php if(isset($_SESSION['cnt_member']) && $_SESSION['cnt_member'] != 0)  { ?>
+							<img  src="member_profiles/<?php echo $row['member_image']; ?>" alt="">
+						<?php } else { ?>
+						<a href="plans.php"><img class="blurred-image" src="member_profiles/<?php echo $row['member_image']; ?>" alt=""></a>
+						<?php } ?>
+						</a>
+						<!--<div class="pro-ave" title="User currently available">
+							<span class="pro-ave-yes"></span>
+						</div>-->
+						<div class="pro-avl-status">
+							<?php
+								$last_log = "SELECT * FROM login_details WHERE user_id = '".$row['member_id']."' ORDER BY login_details_id desc" ;
+								//echo $last_log;
+								$data1 = mysqli_query($conn, $last_log);
+
+								if (!$data1) {
+									die("Query failed: " . mysqli_error($conn));
+								}
+
+								$logs = mysqli_fetch_assoc($data1);
+
+								if ($logs && isset($logs['last_activity'])) {
+									$last_activity = new DateTime($logs['last_activity']); // Convert to DateTime
+									$current_time = new DateTime(); // Current time
+									$interval = $last_activity->diff($current_time); // Calculate difference
+
+									// Debugging: Ensure correct format
+									//echo "Raw Last Activity Timestamp: " . $last_activity->format('Y-m-d H:i:s') . "<br>";
+
+									// Format the difference in a human-readable way
+									if ($interval->y > 0) {
+										$time_display = $interval->y . " year(s) ago";
+									} elseif ($interval->m > 0) {
+										$time_display = $interval->m . " month(s) ago";
+									} elseif ($interval->d > 0) {
+										$time_display = $interval->d . " day(s) ago";
+									} elseif ($interval->h > 0) {
+										$time_display = $interval->h . " hour(s) ago";
+									} elseif ($interval->i > 0) {
+										$time_display = $interval->i . " minute(s) ago";
+									} else {
+										$time_display = "Just now";
+									}
+								} else {
+									$time_display = "Login not done yet";
+								}
+								?>
+
+								<h5>Last login: <?php echo $time_display; ?></h5>
+
+							<!--<span class="marqu">Last login 10 mins ago | I'll be available on 10:00
+								AM</span>-->
+						</div>
+					</div>
+					<!--END PROFILE IMAGE-->
+
+					<!--PROFILE NAME-->
+					<div class="pro-detail">
+						<div class="verification-container" style="padding-right: 285px;">
+							<?php if (!empty($row['member_adhar_id']) && !empty($row['member_contact'])) { ?>
+								<div class="verification-box verified">
+									&nbsp;<i class="fa fa-check-circle"></i> Verified Member
+								</div>
+								<div class="verification-details">
+									✅ Verified Aadhar Card <br>
+									✅ Verified Contact Number
+								</div>
+							<?php } else { ?>
+								<div class="verification-box not-verified">
+									&nbsp;<i class="fa fa-exclamation-circle"></i> Not Verified
+								</div>
+								<div class="verification-details">
+									<?php if (!empty($row['member_adhar_id'])) { ?>
+										✅ Verified Aadhar Card <br>
+									<?php } else { ?>
+										❌ Not Verified Aadhar Card <br>
+									<?php } ?>
+									
+									<?php if (!empty($row['member_contact'])) { ?>
+										✅ Verified Contact Number
+									<?php } else { ?>
+										❌ Not Verified Contact Number
+									<?php } ?>
+								</div>
+							<?php } ?>
+						</div>
+												
+<?php 
+//echo "<pre>";
+//print_r($_SESSION);
+if(isset($_SESSION['cnt_member']) && $_SESSION['cnt_member'] != 0) 
+{
+ // Show full last name if access is granted
+$lastname = ucfirst($row['member_lastname']);
+$profile_url = "profile_details.php?member_id=" . $row['member_id'] . 
+			   "&Religion=" . $row['member_religion'] . 
+			   "&gender=" . $row['member_gender'] . 
+			   "&city=" . $row['member_city'];
+} else {
+  // Show only the first character of the last name with a lock icon
+$lastname = substr($row['member_lastname'], 0, 1) . ' <i class="fa fa-lock" aria-hidden="true"></i>';
+
+// Redirect to plans.php if they click on the profile link
+$profile_url = "plans.php";
+
+
+}
+?>
+
+<h4>
+<a href="<?php echo $profile_url; ?>">
+	<?php echo ucfirst($row['member_firstname']) . " " . $lastname; 
+	if ($matched) {
+	echo " <span style='color: green; font-weight: bold;'>[Matched Profile]</span>";
+}?>
+</a>
+
+</h4>
+						<div class="col-sm-12 profile-container">
+							<table class="profile-table">
+								<tr>
+									<td>Age / Height:</td>
+									<td><?php echo $row['member_age'] . " Y / " . $row['member_height']." in"; ?></td>
+								</tr>
+								<tr>
+									<td>Religion:</td>
+									<td><?php echo $row['member_religion']; ?></td>
+								</tr>
+								<tr>
+									<td>Marital Status:</td>
+									<td><?php echo $row['marital_status']; ?></td>
+								</tr>
+								<tr>
+									<td>Email Address:</td>
+									<td>
+										<?php 
+											if(isset($_SESSION['cnt_member']) && $_SESSION['cnt_member'] != 0) 
+											{ 
+												echo ucfirst($row['member_email']);  
+											} 
+											else 
+											{ 
+										?>
+											<a href="plans.php" title="Upgrade to view details" class="lock-icon">
+												<i class="fa fa-lock" aria-hidden="true"></i>
+											</a>
+										<?php 
+											}
+										?>
+									</td>
+								</tr>
+								<tr>
+									<td>Profile For:</td>
+									<td><?php echo $row['member_profile_for']; ?></td>
+								</tr>
+							</table>														
+							<!-- <ul class="login_details">
+							  <li>Already a member? <a href="login.php">Login Now</a></li>
+							  <li>If not a member? <a href="register.php">Register Now</a></li>
+							</ul> -->
+						</div>
+						<!--<div class="pro-bio">
+							<label>Email Address :</label><?php //echo " " . ucfirst($row['member_email']);?></span><br>
+							<label>Qualification :</label><?php //echo " " . ucfirst($row['member_qualification']);?></span><br>
+							<label>Occupation :</label><?php //echo " " . ucfirst($row['member_occupation']);?></span><br>
+							<label>Age :</label><?php //echo " " . $row['member_age'];?></span><br>
+							<label>Height :</label><?php //echo " " . $row['member_height'];?></span>
+						</div>-->
+						<br>
+						
+						<div class="links">
+							<!--<span class="cta-chat">Chat now</span>-->
+							<!--<a href="#!">WhatsApp</a> -->
+							<a href="profile_details.php?member_id=<?php echo $row['member_id']; ?>&Religion=<?php echo $row['member_religion']; ?>&gender=<?php echo $row['member_gender']; ?>&city=<?php echo $row['member_city']; ?>">More detaiils</a>
+							<?php 
+								if (isset($_SESSION['member_id'])) {
+										$logged_member_id = $_SESSION['member_id'];
+										$target_member_id = $row['member_id']; // Member to check
+
+										// Check if they are already friends
+										if (isFriend($conn, $logged_member_id, $target_member_id)) {
+											echo "✔ Friend"; // Show only if they are already friends
+										} else {
+											// Check if a friend request is pending
+											$sql = "SELECT send_request_id FROM send_request_tbl WHERE member_id = '$logged_member_id'";
+											$result = mysqli_query($conn, $sql);
+
+											$is_pending = false;
+											while ($row_request = mysqli_fetch_assoc($result)) {
+												$requests = json_decode($row_request['send_request_id'], true); // Decode JSON data
+
+												// Check if request exists and is pending
+												if (isset($requests[$target_member_id]) && $requests[$target_member_id] === "pending") {
+													$is_pending = true;
+													break; // No need to check further
+												}
+											}
+
+											// Show "🚀 Requested" if request is pending
+											if ($is_pending) {
+												echo "🚀 Requested";
+											} else {
+												// Show "Send Request" button if no request exists
+												echo '<a href="send_request1.php?member_id=' . $target_member_id . '">➕ Send Request</a>';
+											}
+										}
+									}
+							?>	
+							<!--class="cta cta-sendint" data-bs-toggle="modal" data-bs-target="#sendInter"-->
+							<a href="kundali_matching.php?member_id=<?php echo $row['member_id']; ?>&Religion=<?php echo $row['member_religion']; ?>&gender=<?php echo $row['member_gender']; ?>&city=<?php echo $row['member_city']; ?>">Kundali Match</a>
+						</div>
+					</div>
+					<!--END PROFILE NAME-->
+					<!--SAVE
+						<span class="enq-sav" data-toggle="tooltip" title="Click to save this profile."><i class="fa fa-thumbs-o-up" aria-hidden="true"></i></span>-->
+					<!--END SAVE-->
+				</div>										
+			</li>
+		<?php
+			}
+		?>
+		</ul>
+	</body>
+</html>
+<?php
+	function isFriend($conn, $logged_member_id, $check_member_id) {
+		$friend_ids = array();
+
+		// Step 1: Get accepted friends sent by logged-in user
+		$sql = "SELECT * FROM send_request_tbl WHERE member_id = '$logged_member_id'";
+		$res = mysqli_query($conn, $sql);
+
+		while ($row = mysqli_fetch_assoc($res)) {
+			$send_request_json = json_decode($row['send_request_id'], true);
+			foreach ($send_request_json as $target_member_id => $status) {
+				if ($status == 'accepted') {
+					$friend_ids[] = $target_member_id;
+				}
+			}
+		}
+
+		// Step 2: Get users who accepted request from logged-in user
+		$sql2 = "SELECT * FROM send_request_tbl WHERE send_request_id LIKE '%\"$logged_member_id\":\"accepted\"%'";
+		$res2 = mysqli_query($conn, $sql2);
+
+		while ($row2 = mysqli_fetch_assoc($res2)) {
+			$other_member_id = $row2['member_id'];
+			$send_request_json2 = json_decode($row2['send_request_id'], true);
+			if (isset($send_request_json2[$logged_member_id]) && $send_request_json2[$logged_member_id] == 'accepted') {
+				$friend_ids[] = $other_member_id;
+			}
+		}
+
+		// Step 3: Remove duplicates
+		$friend_ids = array_unique($friend_ids);
+
+		// Step 4: Check if check_member_id exists in friend list
+		if (in_array($check_member_id, $friend_ids)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+?>
+<script>
+         $(document).ready(function() {
+            $('.wishlist-icon').click(function() {
+                var icon = $(this);
+                var profile_id = icon.data('id');
+
+                $.ajax({
+                    url: 'wishlist_action.php',
+                    type: 'POST',
+                    data: { profile_id: profile_id },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.status === 'not_logged_in') {
+                            window.location.href = 'login.php';
+                        }else if(response.status === 'expiry'){
+								window.location.href = 'plans.php';
+						}							
+						else {
+                            if (response.status === 'bookmarked') {
+                                icon.find('i').removeClass('far fa-heart').addClass('fas fa-heart').css('color', 'red');
+                            } else if (response.status === 'unbookmarked') {
+                                icon.find('i').removeClass('fas fa-heart').addClass('far fa-heart').css('color', '');
+                            }
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.log("AJAX Error: " + error);
+                    }
+                });
+            });
+        });
+    </script>

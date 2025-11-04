@@ -1,0 +1,1015 @@
+<?php
+  include 'connection.php';
+?>
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title><?php echo $WEB_TITLE; ?></title>
+    <!--== META TAGS ==-->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="theme-color" content="#f6af04">
+    <meta name="description" content="">
+    <meta name="keyword" content="">
+    <!--== FAV ICON(BROWSER TAB ICON) ==-->
+    <link rel="shortcut icon" href="images/fav.ico" type="image/x-icon">
+    <!--== CSS FILES ==-->
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/animate.min.css">
+    <link rel="stylesheet" href="css/style.css">
+	<style>
+		.log{
+			background-color: rgb(255, 255, 255);
+			background-clip: padding-box;
+			border-radius: 4px;
+			color: rgb(85, 85, 85);
+			display: block;
+			height: 50px;
+			overflow: hidden;
+			line-height: 37px;
+			padding: 7px 5px 0px 12px;
+			position: relative;
+			text-decoration: none;
+			white-space: nowrap;
+		}
+	</style>
+</head>
+
+<body>
+    <!-- PRELOADER -->
+    <!-- END PRELOADER -->
+
+    <!-- POPUP SEARCH -->
+    <!-- END -->
+
+    <!-- TOP MENU -->
+	<?php
+		include 'header.php';
+	?>
+    <!-- END -->
+
+    <!-- MENU POPUP -->
+	<?php
+	    include 'menu.php';
+	?>
+    <!-- END MOBILE MENU POPUP -->
+
+    <!-- MOBILE USER PROFILE MENU POPUP -->
+    <!-- END USER PROFILE MENU POPUP -->
+
+    <!-- BANNER & SEARCH -->
+    <section>
+		
+        <div class="str">
+            <div class="hom-head">
+                <div class="container">
+                    <div class="row">
+                        <div class="hom-ban">
+                            <div class="ban-tit">
+                                <span><i class="no1"></i> Matrimony</span>
+                                <h1>Find your<br><b>Right Match</b> here</h1>
+                                <p>Most trusted Matrimony Brand in the World.</p>
+                            </div>
+                            <div class="ban-search chosenini">
+                                <form method="POST" action="all_profiles.php">
+                                    <ul>
+                                        <?php 
+										if(!isset($_SESSION['member_gender'])) { 
+										?>
+										<li class="sr-look">
+											<div class="form-group">
+												<label>I'm looking for</label>
+												<select class="chosen-select" name="member_looking_for" required oninput="clearError('genderError')">
+													<option selected disabled value="">I'm looking for</option>
+													<option value="Male">Male</option>
+													<option value="Female">Female</option>
+												</select>
+												<span class="error" id="genderError" style="color: white;"></span>
+											</div>
+										</li>
+										<?php } else { ?>
+										<li class="sr-look">
+											<div class="form-group">
+												<span class="log">
+													<?php echo ($_SESSION['member_gender'] == "Male") ? "Female" : "Male"; ?>
+												</span>
+											</div>
+										</li>
+										<?php } ?>
+										<li class="sr-age">
+											<div class="form-group">
+												<label>Age</label>
+												<select class="chosen-select" name="member_age" required oninput="clearError('ageError')">
+													<option selected disabled value="">Age</option>
+													<?php for ($i = 21; $i <= 35; $i++) { ?>
+														<option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+													<?php } ?>
+												</select>
+												<span class="error" id="ageError" style="color: white;"></span>
+											</div>
+										</li>
+										<li class="sr-reli">
+											<div class="form-group">
+												<label>Religion</label>
+												<select class="chosen-select" name="member_religion" required oninput="clearError('religionError')">
+													<option selected disabled value="">Religion</option>
+													<option value="Hindu">Hindu</option>
+													<option value="Muslim">Muslim</option>
+													<option value="Christian">Christian</option>
+													<option value="Sikh">Sikh</option>
+													<option value="Buddhist">Buddhist</option>
+													<option value="Jain">Jain</option>
+													<option value="Parsi">Parsi</option>
+													<option value="Jewish">Jewish</option>
+												</select>
+												<span class="error" id="religionError" style="color: white;"></span>
+											</div>
+										</li>
+										<li class="sr-cit">
+											<div class="form-group">
+												<label>City</label>
+												<select class="chosen-select" name="member_city" required oninput="clearError('cityError')">
+													<option selected disabled value="">Location</option>
+													<?php 
+													$str = "SELECT * FROM city_tbl ORDER BY city_name ASC;";
+													$data = mysqli_query($conn, $str);
+													while ($row = mysqli_fetch_array($data)) { ?>
+														<option value="<?php echo $row['city_id']; ?>">
+															<?php echo $row['city_name']; ?>
+														</option>
+													<?php } ?>
+												</select>
+												<span class="error" id="cityError" style="color: white;"></span>
+											</div>
+										</li>
+										<li class="sr-btn">
+											<input type="submit" value="Search" name="searchbtn" onclick="return validateForm();">
+										</li>
+                                    </ul>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- END -->
+
+    <!-- BANNER SLIDER -->
+    <section>
+        <div class="hom-ban-sli">
+            <div>
+                <ul class="ban-sli">
+                    <li>
+                        <div class="image">
+                            <img src="images/ban-bg.jpg" alt="" loading="lazy">
+                        </div>
+                    </li>
+                    <li>
+                        <div class="image">
+                            <img src="images/banner.jpg" alt="" loading="lazy">
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    <!-- END -->
+
+    <!-- QUICK ACCESS -->
+    <section>
+        <div class="str home-acces-main">
+            <div class="container">
+                <div class="row">
+                    <!-- BACKGROUND SHAPE -->
+                    <div class="wedd-shap">
+                        <span class="abo-shap-1"></span>
+                        <span class="abo-shap-4"></span>
+                    </div>
+                    <!-- END BACKGROUND SHAPE -->
+
+                    <div class="home-tit">
+                        <p>Quick Access</p>
+                        <h2><span>Our Services</span></h2>
+                        <span class="leaf1"></span>
+                        <span class="tit-ani-"></span>
+                    </div>
+                    <div class="home-acces">
+                        <ul class="hom-qui-acc-sli">
+                            <li>
+                                <div class="wow fadeInUp hacc hacc1" data-wow-delay="0.1s">
+                                    <div class="con">
+                                        <img src="images/icon/user.png" alt="" loading="lazy">
+                                        <h4>Browse Profiles</h4>
+										<?php 
+										$str="SELECT count(member_id) as member_count FROM member_tbl";
+										$count=mysqli_query($conn,$str);
+										$test_member=mysqli_fetch_array($count);
+										?>
+                                        <p><?php echo $test_member['member_count'] . "+ Profiles "; ?></p>
+                                        <a href="all_profiles.php">View more</a>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="wow fadeInUp hacc hacc2" data-wow-delay="0.2s">
+                                    <div class="con">
+                                        <img src="images/icon/gate.png" alt="" loading="lazy">
+                                        <h4>Wedding</h4>
+                                        <?php 
+										$str="SELECT count(member_id) as member_count FROM member_tbl";
+										$count=mysqli_query($conn,$str);
+										$test_member=mysqli_fetch_array($count);
+										?>
+                                        <p><?php echo $test_member['member_count'] . "+ Profiles "; ?></p>
+                                        <a href="about.php">View more</a>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="wow fadeInUp hacc hacc3" data-wow-delay="0.3s">
+                                    <div class="con">
+                                        <img src="images/icon/couple.png" alt="" loading="lazy">
+                                        <h4>All Services</h4>
+                                        <?php 
+										$str="SELECT count(member_id) as member_count FROM member_tbl";
+										$count=mysqli_query($conn,$str);
+										$test_member=mysqli_fetch_array($count);
+										?>
+                                        <p><?php echo $test_member['member_count'] . "+ Profiles "; ?></p>
+                                        <a href="about.php">View more</a>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="wow fadeInUp hacc hacc4" data-wow-delay="0.4s">
+                                    <div class="con">
+                                        <img src="images/icon/hall.png" alt="" loading="lazy">
+                                        <h4>Join Now</h4>
+                                        <p>Start for free</p>
+                                        <a href="plans.php">Get started</a>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="wow fadeInUp hacc hacc3" data-wow-delay="0.3s">
+                                    <div class="con">
+                                        <img src="images/icon/photo-camera.png" alt="" loading="lazy">
+                                        <h4>Photo gallery</h4>
+                                        <?php 
+										$str="SELECT count(member_id) as member_count FROM member_tbl";
+										$count=mysqli_query($conn,$str);
+										$test_member=mysqli_fetch_array($count);
+										?>
+                                        <p><?php echo $test_member['member_count'] . "+ Profiles "; ?></p>
+                                        <a href="all_profiles.php">View more</a>
+                                    </div>
+                                </div>
+                            </li>
+                            <!--<li>
+                                <div class="wow fadeInUp hacc hacc4" data-wow-delay="0.4s">
+                                    <div class="con">
+                                        <img src="images/icon/cake.png" alt="" loading="lazy">
+                                        <h4>Blog & Articles</h4>
+                                        <p>Start for free</p>
+                                        <a href="blog.html">Get started</a>
+                                    </div>
+                                </div>
+                            </li>-->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- END -->
+
+    <!-- TRUST BRANDS -->
+    <section>
+        <div class="hom-cus-revi">
+            <div class="container">
+                <div class="row">
+                    <div class="home-tit">
+                        <p>trusted brand</p>
+                        <h2>
+							<span>
+								Trust by <b class="num"><?php 
+									$str="SELECT count(member_id) as member_count FROM testimonial_tbl";
+									$count=mysqli_query($conn,$str);
+									$test_member=mysqli_fetch_array($count);
+									
+									echo $test_member['member_count'];?></b>+ Couples
+							</span>
+						</h2>
+                        <span class="leaf1"></span>
+                        <span class="tit-ani-"></span>
+                    </div>
+                    <div class="slid-inn cus-revi">
+                        <ul class="slider3">
+							<?php 
+								$str="select * from testimonial_tbl,member_tbl,city_tbl where testimonial_tbl.member_id=member_tbl.member_id and city_tbl.city_id=member_tbl.member_city and member_tbl.member_status='1' and testimonial_tbl.testimonial_status='1'";
+								$data=mysqli_query($conn,$str);
+								
+								while($row=mysqli_fetch_array($data))
+								{
+							?>
+								<li>
+									<div class="cus-revi-box">
+										<div class="revi-im">
+											<img src="member_profiles/<?php echo $row['member_image'];?>" alt="" loading="lazy">
+											<i class="cir-com cir-1"></i>
+											<i class="cir-com cir-2"></i>
+											<i class="cir-com cir-3"></i>
+										</div>
+										<p><?php echo $row['testimonial_description'];?> </p>
+										<h5><?php echo $row['member_lastname'] . " " . $row['member_firstname'];?></h5>
+										<span><?php echo $row['city_name'];?></span>
+									</div>
+								</li>
+							<?php
+								}
+							?>
+                        </ul>
+                    </div>
+                    <!--<div class="cta-full-wid">
+                        <a href="#!" class="cta-dark">More customer reviews</a>
+                    </div>-->
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- END -->
+
+    <!-- BANNER -->
+    <section>
+        <div class="str">
+            <div class="ban-inn ban-home">
+                <div class="container">
+                    <div class="row">
+                        <div class="hom-ban">
+                            <div class="ban-tit">
+                                <span><i class="no1"></i> Vivahmilan</span>
+                                <h2>Why choose us</h2>
+                                <p>Most Trusted and premium Matrimony Service in the World.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- END -->
+
+    <!-- START -->
+    <section>
+        <div class="ab-sec2">
+            <div class="container">
+                <div class="row">
+                    <ul>
+                        <li>
+                            <div class="animate animate__animated animate__slower" data-ani="animate__flipInX"
+                                data-dely="0.1">
+                                <img src="images/icon/prize.png" alt="" loading="lazy">
+                                <h4>Genuine profiles</h4>
+                                <p>Contact genuine profiles with 100% verified mobile</p>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="animate animate__animated animate__slower" data-ani="animate__flipInX"
+                                data-dely="0.3">
+                                <img src="images/icon/trust.png" alt="" loading="lazy">
+                                <h4>Most trusted</h4>
+                                <p>The most trusted Vivahmilan brand lorem</p>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="animate animate__animated animate__slower" data-ani="animate__flipInX"
+                                data-dely="0.6">
+                                <img src="images/icon/rings.png" alt="" loading="lazy">
+								<?php 
+									$str="SELECT count(member_id) as member_count FROM testimonial_tbl";
+									$count=mysqli_query($conn,$str);
+									$test_member=mysqli_fetch_array($count);
+								?>
+								<h4><?php echo $test_member['member_count'] . "+ Weddings "; ?></h4>
+                                <!--<h4>2000+ weddings</h4>-->
+                                <p>Lakhs of peoples have found their life partner</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- END -->
+
+    <!-- ABOUT START -->
+    <section>
+        <div class="ab-wel">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="ab-wel-lhs">
+                            <span class="ab-wel-3"></span>
+                            <img src="images/about/Index1.jpg" alt="" loading="lazy" class="ab-wel-1">
+                            <img src="images/couples/Index9.jpg" alt="" loading="lazy" class="ab-wel-2">
+                            <span class="ab-wel-4"></span>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="ab-wel-rhs">
+                            <div class="ab-wel-tit">
+                                <h2>Welcome to <em>Vivahmilan</em></h2>
+                                <p>we believe that every love story is unique, and finding your perfect match should be a journey filled with joy, excitement, and trust.</p>
+                                
+                            </div>
+                            <div class="ab-wel-tit-1">
+                                <p>
+									Our platform is designed to bring together individuals seeking a meaningful and lifelong connection, making the path to love smoother and more fulfilling.
+									Join our ever-growing community of hopeful romantics and let Vivahmilan be the bridge to your happily ever after. Love is just a click away—start your journey today!
+								</p>
+                            </div>
+                            <div class="ab-wel-tit-2">
+                                <ul>
+                                    <li>
+                                        <div>
+                                            <i class="fa fa-phone" aria-hidden="true"></i>
+                                            <h4>Enquiry <em>+91 99986 75436</em></h4>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div>
+                                            <i class="fa fa-envelope-o" aria-hidden="true"></i>
+                                            <h4>Get Support <em>vivaahmilan123@gmail.com</em></h4>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- END -->
+
+    <!-- COUNTS START -->
+    <section>
+        <div class="ab-cont">
+            <div class="container">
+                <div class="row">
+                    <ul>
+                        <li>
+                            <div class="ab-cont-po">
+                                <i class="fa fa-heart-o" aria-hidden="true"></i>
+                                <div>
+                                    <?php 
+										$str="SELECT count(member_id) as member_count FROM testimonial_tbl";
+										$count=mysqli_query($conn,$str);
+										$test_member=mysqli_fetch_array($count);
+									?>
+                                    <h4><?php echo $test_member['member_count'];?></h4>
+                                    <span>Couples pared</span>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="ab-cont-po">
+                                <i class="fa fa-users" aria-hidden="true"></i>
+                                <div>
+									<?php 
+										$str="SELECT count(member_id) as member_count FROM member_tbl";
+										$count=mysqli_query($conn,$str);
+										$test_member=mysqli_fetch_array($count);
+									?>
+                                    <h4><?php echo $test_member['member_count'];?></h4>
+                                    <span>Registerents</span>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="ab-cont-po">
+                                <i class="fa fa-male" aria-hidden="true"></i>
+                                <div>
+									<?php 
+										$str="SELECT count(member_id) as total_male FROM member_tbl where member_gender='Male'";
+										$count=mysqli_query($conn,$str);
+										$male_member=mysqli_fetch_array($count);
+									?>
+                                    <h4><?php echo $male_member['total_male'];?></h4>
+                                    <span>Mens</span>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="ab-cont-po">
+                                <i class="fa fa-female" aria-hidden="true"></i>
+                                <div>
+                                    <?php 
+										$str="SELECT count(member_id) as total_female FROM member_tbl where member_gender='Female'";
+										$count=mysqli_query($conn,$str);
+										$female_member=mysqli_fetch_array($count);
+									?>
+                                    <h4><?php echo $female_member['total_female'];?></h4>
+                                    <span>Womens</span>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- END -->
+
+    <!-- MOMENTS START -->
+    <section>
+        <div class="wedd-tline">
+            <div class="container">
+                <div class="row">
+                    <div class="home-tit">
+                        <p>Moments</p>
+                        <h2><span>How it works</span></h2>
+                        <span class="leaf1"></span>
+                        <span class="tit-ani-"></span>
+                    </div>
+                    <div class="inn">
+                        <ul>
+                            <li>
+                                <div class="tline-inn">
+                                    <div class="tline-im animate animate__animated animate__slower"
+                                        data-ani="animate__fadeInUp">
+                                        <img src="images/icon/Index1.jpg" style="height: 145px;width: 170px;" alt="" loading="lazy">
+                                    </div>
+                                    <div class="tline-con animate animate__animated animate__slow"
+                                        data-ani="animate__fadeInUp">
+                                        <h5>Register</h5>
+                                        <span>Timing: 24*7</span>
+                                        <p>we want to make your journey toward finding the perfect match smooth and enjoyable. Follow these simple tips to create a standout profile and attract compatible matches</p>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="tline-inn tline-inn-reve">
+                                    <div class="tline-con animate animate__animated animate__slower"
+                                        data-ani="animate__fadeInUp">
+                                        <h5>Find your Match</h5>
+                                        <span>Timing: 24*7</span>
+                                        <p>we understand that finding the right life partner is one of the most important decisions of your life. That’s why we make the process simple, personalized, and meaningful.</p>
+                                    </div>
+                                    <div class="tline-im animate animate__animated animate__slow"
+                                        data-ani="animate__fadeInUp">
+                                        <img src="images/icon/wedding-2.png" alt="" loading="lazy">
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="tline-inn">
+                                    <div class="tline-im animate animate__animated animate__slower"
+                                        data-ani="animate__fadeInUp">
+                                        <img src="images/icon/love-birds.png" alt="" loading="lazy">
+                                    </div>
+                                    <div class="tline-con animate animate__animated animate__slow"
+                                        data-ani="animate__fadeInUp">
+                                        <h5>Send Interest</h5>
+                                        <span>Timing: 24*7</span>
+                                        <p>At Vivahmilan, finding your perfect match is just the beginning—making the first move is what brings your love story to life! Our "Send Interest" feature allows you to express your enthusiasm and initiate meaningful connections effortlessly.</p>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="tline-inn tline-inn-reve">
+                                    <div class="tline-con animate animate__animated animate__slower"
+                                        data-ani="animate__fadeInUp">
+                                        <h5>Get Profile Information</h5>
+                                        <span>Timing: 24*7</span>
+                                        <p>At Vivahmilan, we believe that understanding a person beyond just a picture is key to finding a meaningful connection. Our detailed profiles provide all the essential information you need to make an informed decision about your potential match.</p>
+                                    </div>
+                                    <div class="tline-im animate animate__animated animate__slow"
+                                        data-ani="animate__fadeInUp">
+                                        <img src="images/icon/network.png" alt="" loading="lazy">
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="tline-inn">
+                                    <div class="tline-im animate animate__animated animate__slower"
+                                        data-ani="animate__fadeInUp">
+                                        <img src="images/icon/chat.png" alt="" loading="lazy">
+                                    </div>
+                                    <div class="tline-con animate animate__animated animate__slow"
+                                        data-ani="animate__fadeInUp">
+                                        <h5>Start Meetups</h5>
+                                        <span>Timing: 24*7</span>
+                                        <p>At Vivahmilan, we believe that online connections flourish when they turn into real-life interactions. Once you've found someone special and built a meaningful connection, it's time to take the next step—meeting in person!</p>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="tline-inn tline-inn-reve">
+                                    <div class="tline-con animate animate__animated animate__slower"
+                                        data-ani="animate__fadeInUp">
+                                        <h5>Getting Marriage</h5>
+                                        <span>Timing: 24*7</span>
+                                        <p>Congratulations! You've found your perfect match on Vivahmilan, and now it's time to embark on the most beautiful journey of your life—marriage. We’re here to support you every step of the way!</p>
+                                    </div>
+                                    <div class="tline-im animate animate__animated animate__slow"
+                                        data-ani="animate__fadeInUp">
+                                        <img src="images/icon/Index3.jpg" style="width:130px;" alt="" loading="lazy">
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- END -->
+
+    <!-- RECENT COUPLES -->
+    <section>
+        <div class="hom-couples-all">
+            <div class="container">
+                <div class="row">
+                    <div class="home-tit">
+                        <p>trusted brand</p>
+                        <h2><span>Recent Couples</span></h2>
+                        <span class="leaf1"></span>
+                        <span class="tit-ani-"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="hom-coup-test">
+                <ul class="couple-sli">
+                    <li>
+                        <div class="hom-coup-box">
+                            <span class="leaf"></span>
+                            <img src="images/couples/Index1.jpg" alt="" loading="lazy">
+                            <div class="bx">
+                                <h4>Dhaval & Vaibhavi <span>India</span></h4>
+                                <!--<a href="wedding-video.html" class="sml-cta cta-dark">View more</a>-->
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="hom-coup-box">
+                            <span class="leaf"></span>
+                            <img src="images/couples/Index2.jpg" alt="" loading="lazy">
+                            <div class="bx">
+                                <h4>Mihir & Juhi <span>India</span></h4>
+                                <!--<a href="wedding-video.html" class="sml-cta cta-dark">View more</a>-->
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="hom-coup-box">
+                            <span class="leaf"></span>
+                            <img src="images/couples/Index3.jpg" alt="" loading="lazy">
+                            <div class="bx">
+                                <h4>Raj & Swara <span>India</span></h4>
+                                <!--<a href="wedding-video.html" class="sml-cta cta-dark">View more</a>-->
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="hom-coup-box">
+                            <span class="leaf"></span>
+                            <img src="images/couples/Index4.jpg" alt="" loading="lazy">
+                            <div class="bx">
+                                <h4>Yug & Aneri <span>India</span></h4>
+                                <!--<a href="wedding-video.html" class="sml-cta cta-dark">View more</a>-->
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="hom-coup-box">
+                            <span class="leaf"></span>
+                            <img src="images/couples/Index5.jpg" alt="" loading="lazy">
+                            <div class="bx">
+                                <h4>Neel & Bhumi <span>India</span></h4>
+                                <!--<a href="wedding-video.html" class="sml-cta cta-dark">View more</a>-->
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="hom-coup-box">
+                            <span class="leaf"></span>
+                            <img src="images/couples/Index6.jpg" alt="" loading="lazy">
+                            <div class="bx">
+                                <h4>Ayansh & Selina <span>India</span></h4>
+                                <!--<a href="wedding-video.html" class="sml-cta cta-dark">View more</a>-->
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="hom-coup-box">
+                            <span class="leaf"></span>
+                            <img src="images/couples/Index7.jpg" alt="" loading="lazy">
+                            <div class="bx">
+                                <h4>Jay & Mili <span>India</span></h4>
+                                <!--<a href="wedding-video.html" class="sml-cta cta-dark">View more</a>-->
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="hom-coup-box">
+                            <span class="leaf"></span>
+                            <img src="images/couples/Index8.jpg" alt="" loading="lazy">
+                            <div class="bx">
+                                <h4>Parth & Lazy <span>India</span></h4>
+                                <!--<a href="wedding.html" class="sml-cta cta-dark">View more</a>-->
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    <!-- END -->
+
+
+    <!-- TEAM START -->
+    <section>
+        <div class="ab-team">
+            <div class="container">
+                <div class="row">
+                    <div class="home-tit">
+                        <p>OUR PROFESSIONALS</p>
+                        <h2><span>Meet Our Team</span></h2>
+                        <span class="leaf1"></span>
+                    </div>
+                    <ul>
+                        <li>
+                            <div>
+                                <img src="images/rishi1.jpg" style="width: 313px;" alt="" loading="lazy">
+                                <h4>Rishi Patel</h4>
+                                <p>Developer</p>
+                                <!--<ul class="social-light">
+                                    <li><a href="#!"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+                                    <li><a href="#!"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+                                    <li><a href="#!"><i class="fa fa-whatsapp" aria-hidden="true"></i></a></li>
+                                    <li><a href="#!"><i class="fa fa-linkedin" aria-hidden="true"></i></a></li>
+                                    <li><a href="#!"><i class="fa fa-instagram" aria-hidden="true"></i></a></li>
+                                </ul>-->
+                            </div>
+                        </li>
+                        <li>
+                            <div>
+                                <img src="images/sumeet.jpeg" style="width: 313px;" alt="" loading="lazy">
+                                <h4>Sumeet Pandey</h4>
+                                <p>Desginer</p>
+                                <!--<ul class="social-light">
+                                    <li><a href="#!"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+                                    <li><a href="#!"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+                                    <li><a href="#!"><i class="fa fa-whatsapp" aria-hidden="true"></i></a></li>
+                                    <li><a href="#!"><i class="fa fa-linkedin" aria-hidden="true"></i></a></li>
+                                    <li><a href="#!"><i class="fa fa-instagram" aria-hidden="true"></i></a></li>
+                                </ul>-->
+                            </div>
+                        </li>
+                        <li>
+                            <div>
+                                <img src="images/rohan.jpg" style="width: 313px;" alt="" loading="lazy">
+                                <h4>Rohan Rajput</h4>
+                                <p>Tester</p>
+                                <!--<ul class="social-light">
+                                    <li><a href="#!"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+                                    <li><a href="#!"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+                                    <li><a href="#!"><i class="fa fa-whatsapp" aria-hidden="true"></i></a></li>
+                                    <li><a href="#!"><i class="fa fa-linkedin" aria-hidden="true"></i></a></li>
+                                    <li><a href="#!"><i class="fa fa-instagram" aria-hidden="true"></i></a></li>
+                                </ul>-->
+                            </div>
+                        </li>
+                       
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- END -->
+
+
+    <!-- GALLERY START -->
+    <section>
+        <div class="wedd-gall home-wedd-gall">
+            <div class="">
+                <div class="gall-inn">
+                    <div class="home-tit">
+                        <p>collections</p>
+                        <h2><span>Photo gallery</span></h2>
+                        <span class="leaf1"></span>
+                        <span class="tit-ani-"></span>
+                    </div>
+                    <div class="col-sm-6 col-md-2">
+                        <div class="gal-im animate animate__animated animate__slow" data-ani="animate__flipInX">
+                            <img src="images/gallery/Index1.jpg" class="gal-siz-1" alt="" loading="lazy">
+                            <div class="txt">
+                                <span>Wedding</span>
+                                <h4>Bride & Groom</h4>
+                            </div>
+                        </div>
+                        <div class="gal-im animate animate__animated animate__slower" data-ani="animate__flipInX">
+                            <img src="images/gallery/Index9.jpg" class="gal-siz-2" alt="" loading="lazy">
+                            <div class="txt">
+                                <span>Wedding</span>
+                                <h4>Bride & Groom</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-3">
+                        <div class="gal-im animate animate__animated animate__slower" data-ani="animate__flipInX">
+                            <img src="images/gallery/Index3.jpg" class="gal-siz-2" alt="" loading="lazy">
+                            <div class="txt">
+                                <span>Wedding</span>
+                                <h4>Bride & Groom</h4>
+                            </div>
+                        </div>
+                        <div class="gal-im animate animate__animated animate__slower" data-ani="animate__flipInX">
+                            <img src="images/gallery/Index4.jpg" class="gal-siz-1" alt="" loading="lazy">
+                            <div class="txt">
+                                <span>Wedding</span>
+                                <h4>Bride & Groom</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-2">
+                        <div class="gal-im animate animate__animated animate__slower" data-ani="animate__flipInX">
+                            <img src="images/gallery/Index5.jpg" class="gal-siz-1" alt="" loading="lazy">
+                            <div class="txt">
+                                <span>Wedding</span>
+                                <h4>Bride & Groom</h4>
+                            </div>
+                        </div>
+                        <div class="gal-im animate animate__animated animate__slower" data-ani="animate__flipInX">
+                            <img src="images/gallery/Index6.jpg" class="gal-siz-2" alt="" loading="lazy">
+                            <div class="txt">
+                                <span>Wedding</span>
+                                <h4>Bride & Groom</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-3">
+                        <div class="gal-im animate animate__animated animate__slower" data-ani="animate__flipInX">
+                            <img src="images/gallery/Index7.jpg" class="gal-siz-2" alt="" loading="lazy">
+                            <div class="txt">
+                                <span>Wedding</span>
+                                <h4>Bride & Groom</h4>
+                            </div>
+                        </div>
+                        <div class="gal-im animate animate__animated animate__slower" data-ani="animate__flipInX">
+                            <img src="images/gallery/Index8.jpg" class="gal-siz-1" alt="" loading="lazy">
+                            <div class="txt">
+                                <span>Wedding</span>
+                                <h4>Bride & Groom</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="gal-im animate animate__animated animate__slower" data-ani="animate__flipInX">
+                            <img src="images/gallery/Index10.jpg" class="gal-siz-2" alt="" loading="lazy">
+                            <div class="txt">
+                                <span>Wedding</span>
+                                <h4>Bride & Groom</h4>
+                            </div>
+                        </div>
+                        <div class="gal-im animate animate__animated animate__slower" data-ani="animate__flipInX">
+                            <img src="images/gallery/Index11.jpg" class="gal-siz-1" alt="" loading="lazy">
+                            <div class="txt">
+                                <span>Wedding</span>
+                                <h4>Bride & Groom</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- END -->
+
+    <!-- BLOG POSTS START -->
+    <section>
+        <div class="hom-blog">
+            <div class="container">
+                <div class="row">
+                    <div class="home-tit">
+                        <p>Blog posts</p>
+                        <h2><span>Blog & Articles</span></h2>
+                        <span class="leaf1"></span>
+                        <span class="tit-ani-"></span>
+                    </div>
+                    <div class="blog">
+                        <ul>
+                            <li>
+                                <div class="blog-box">
+                                    <img src="images/blog/Index1.jpg" alt="" loading="lazy">
+                                    <!--<span>Wedding - Johnny</span>-->
+                                    <h2>Wedding Arrangements</h2>
+                                    <p>"with Love, Care & the Perfect Match."</p>
+                                    <!--<a href="blog-details.html" class="cta-dark"><span>Read more</span></a>-->
+                                </div>
+                            </li>
+                            <li>
+                                <div class="blog-box">
+                                    <img src="images/blog/Index2.png" alt="" loading="lazy">
+                                    <!--<span>Wedding - Johnny</span>-->
+                                    <h2>Invitation Cards</h2>
+                                    <p>"Together forever, with your blessings – Join us for our wedding celebrations!"</p>
+                                    <!--<a href="blog-details.html" class="cta-dark"><span>Read more</span></a>-->
+                                </div>
+                            </li>
+                            <li>
+                                <div class="blog-box">
+                                    <img src="images/blog/Index3.jpg" alt="" loading="lazy">
+                                    <!--<span>Wedding - Johnny</span>-->
+                                    <h2>Wedding Movements</h2>
+                                    <p>"Captured in love, sealed in time – Our wedding moments."</p>
+                                    <!--<a href="blog-details.html" class="cta-dark"><span>Read more</span></a>-->
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- END -->
+
+    <!-- FIND YOUR MATCH BANNER -->
+    <section>
+        <div class="str count">
+            <div class="container">
+                <div class="row">
+                    <div class="fot-ban-inn">
+                        <div class="lhs">
+                            <h2>Find your perfect Match now</h2>
+                            <p>and begin your beautiful journey of love today – where hearts connect, dreams align, and forever begins!"</p>
+                            <a href="sign_up.php" class="cta-3">Register Now</a>
+                            <a href="faq.php" class="cta-4">Help & Support</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- END -->
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/select-opt.js"></script>
+    <script src="js/slick.js"></script>
+    <script src="js/custom.js"></script>
+	
+	<!-- FOOTER -->
+	<?php
+	    include 'footer.php';
+	?>
+	<!-- END -->
+	
+	<script>
+	function validateForm() {
+		let isValid = true;
+		
+		const gender = document.querySelector('[name="member_looking_for"]');
+		if (gender && gender.value === "") {
+			document.getElementById('genderError').innerText = "Please select a gender.";
+			isValid = false;
+		}
+		
+		const age = document.querySelector('[name="member_age"]');
+		if (age.value === "") {
+			document.getElementById('ageError').innerText = "Please select an age.";
+			isValid = false;
+		}
+		
+		const religion = document.querySelector('[name="member_religion"]');
+		if (religion.value === "") {
+			document.getElementById('religionError').innerText = "Please select a religion.";
+			isValid = false;
+		}
+		
+		const city = document.querySelector('[name="member_city"]');
+		if (city.value === "") {
+			document.getElementById('cityError').innerText = "Please select a city.";
+			isValid = false;
+		}
+		
+		return isValid;
+	}
+
+	function clearError(errorId) {
+		document.getElementById(errorId).innerText = "";
+	}
+	</script>
+	</body>
+
+</html>

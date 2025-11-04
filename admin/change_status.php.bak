@@ -1,0 +1,304 @@
+<?php
+	include_once 'connection.php';
+	if(!isset($_SESSION["Email"]))
+	{
+		header('location:index.php');
+	}
+
+#------------------------------------------------------------Admin Modules--------------------------------------------------
+	
+    #community status manage here
+	if(isset($_POST['c_id']))
+	{
+		$community_id = $_POST['c_id'];
+		$str= "SELECT community_status FROM community_tbl WHERE community_id = $community_id";
+		$result = mysqli_query($conn, $str);
+		$row = mysqli_fetch_array($result);
+		$status = $row['community_status'];
+		// Toggle the status
+		if ($status == 1) 
+		{
+			$status = 0; 
+		} 
+		else 
+		{
+			$status = 1; 
+		}
+		$qry = "UPDATE community_tbl SET community_status='$status' WHERE community_id=$community_id";
+		$data= mysqli_query($conn, $qry);
+		if ($data) 
+		{
+			echo $status;
+		}
+	}
+	#community status end here
+
+	
+	#sub community status manage here
+	if(isset($_POST['sub_id']))
+	{
+		$s_id = $_POST['sub_id'];
+		$str = "SELECT sub_community_status FROM sub_community_tbl WHERE sub_community_id = $s_id";
+		$result = mysqli_query($conn, $str);
+		$row = mysqli_fetch_array($result);
+		$status = $row['sub_community_status'];
+		// Toggle the status
+		if ($status == 1) 
+		{
+			$status = 0; 
+		} 
+		else 
+		{
+			$status = 1; 
+		}
+		$qry = "UPDATE sub_community_tbl SET sub_community_status='$status' WHERE sub_community_id=$s_id";
+		$data= mysqli_query($conn, $qry);
+		if ($data) 
+		{
+			echo $status;  
+		}
+			
+	}
+	#sub community status end here
+    
+	
+	#language status manage here
+	if(isset($_POST['l_id']))
+	{
+		$language_id = $_POST['l_id'];
+		$str = "SELECT language_status FROM language_tbl WHERE language_id = $language_id";
+		$result = mysqli_query($conn, $str);
+		$row = mysqli_fetch_array($result);
+		$status = $row['language_status'];
+		// Toggle the status
+		if ($status == 1) 
+		{
+			$status = 0; 
+		} 
+		else 
+		{
+			$status = 1; 
+		}
+		$qry = "UPDATE language_tbl SET language_status='$status' WHERE language_id=$language_id";
+		$data= mysqli_query($conn, $qry);
+		if ($data) 
+		{
+			echo $status;    
+		}
+	}
+	#language status end here
+	
+	
+    #package status manage here
+	if(isset($_POST['p_id']))
+	{
+		$package_id = $_POST['p_id'];
+		$str = "SELECT package_status FROM package_tbl WHERE package_id = $package_id";
+		$result = mysqli_query($conn, $str);
+		$row = mysqli_fetch_array($result);
+		$status = $row['package_status'];
+		// Toggle the status
+		if ($status == 1) 
+		{
+			$status = 0; 
+		} 
+		else 
+		{
+			$status = 1; 
+		}
+		$qry = "UPDATE package_tbl SET package_status='$status' WHERE package_id=$package_id";
+		$data= mysqli_query($conn, $qry);
+		if ($data) 
+		{
+			echo $status;    
+		}
+	}
+	#package status end here
+
+
+	#faq status manage here
+	if(isset($_POST['f_id']))
+	{
+		$faq_id = $_POST['f_id'];
+		$str = "SELECT faq_status FROM faq_tbl WHERE faq_id = $faq_id";
+		$result = mysqli_query($conn, $str);
+		$row = mysqli_fetch_array($result);
+		$status = $row['faq_status'];
+		// Toggle the status
+		if ($status == 1) 
+		{
+			$status = 0; 
+		} 
+		else 
+		{
+			$status = 1; 
+		}
+		$qry = "UPDATE faq_tbl SET faq_status='$status' WHERE faq_id=$faq_id";
+		$data= mysqli_query($conn, $qry);
+		if ($data) 
+		{
+			echo $status;   
+		}
+	}
+    #faq status end here
+
+	#admin status manage here
+		if(isset($_POST['a_id']))
+		{
+			$admin_id = $_POST['a_id'];
+			$str = "SELECT admin_status FROM admin_tbl WHERE admin_id = $admin_id";
+			$result = mysqli_query($conn, $str);
+			$row = mysqli_fetch_array($result);
+			$status = $row['admin_status'];
+			// Toggle the status
+			if ($status == 1) 
+			{
+				$status = 0; 
+			} 
+			else 
+			{
+				$status = 1; 
+			}
+			$qry = "UPDATE admin_tbl SET admin_status='$status' WHERE admin_id=$admin_id";
+			$data= mysqli_query($conn, $qry);
+			if ($data) 
+			{
+				echo $status;  
+			}
+		}
+	#admin status end here
+	
+	
+
+#------------------------------------------------------------Member Modules--------------------------------------------------
+
+	#member status manage here
+	if(isset($_POST['m_id']))
+	{
+		$member_id = $_POST['m_id'];
+		$str = "SELECT member_status FROM member_tbl WHERE member_id = $member_id";
+		$result = mysqli_query($conn, $str);
+		$row = mysqli_fetch_array($result);
+		$status = $row['member_status'];
+		// Toggle the status
+		if ($status == 1) 
+		{
+			$status = 0; 
+		} 
+		else 
+		{
+			$status = 1; 
+		}
+		$qry = "UPDATE member_tbl SET member_status='$status' WHERE member_id=$member_id";
+		$data= mysqli_query($conn, $qry);
+		if ($data) 
+		{
+			echo $status;  
+		}
+	}
+	#member status end here
+	
+	#chat message status manage here
+		if(isset($_POST['cm_id']))
+		{
+			$chat_message_id = $_POST['cm_id'];
+			$str = "SELECT status FROM chat_message_tbl WHERE chat_message_id = $chat_message_id";
+			$result = mysqli_query($conn, $str);
+			$row = mysqli_fetch_array($result);
+			$status1 = $row['status'];
+			// Toggle the status
+			if ($status1 == 1) 
+			{
+				$status1 = 0; 
+			} 
+			else 
+			{
+				$status1 = 1; 
+			}
+			$qry = "UPDATE chat_message_tbl SET status='$status1' WHERE chat_message_id=$chat_message_id";
+			$data= mysqli_query($conn, $qry);
+			if ($data) 
+			{
+				echo $status1;  
+			}
+		}
+	#chat message status end here
+
+	#otp status manage here
+		if(isset($_POST['o_id']))
+		{
+			$id = $_POST['o_id'];
+			$str = "SELECT otp_status FROM otp_status_tbl WHERE id = $id";
+			$result = mysqli_query($conn, $str);
+			$row = mysqli_fetch_array($result);
+			$status = $row['otp_status'];
+			// Toggle the status
+			if ($status == 1) 
+			{
+				$status = 0; 
+			} 
+			else 
+			{
+				$status = 1; 
+			}
+			$qry = "UPDATE otp_status_tbl SET otp_status='$status' WHERE id=$id";
+			$data= mysqli_query($conn, $qry);
+			if ($data) 
+			{
+				echo $status;  
+			}
+		}
+	#otp status end here
+
+	#member package details status manage here
+		if(isset($_POST['pd_id']))
+		{
+			$package_detail_id = $_POST['pd_id'];
+			$str = "SELECT package_detail_status FROM package_detail_tbl WHERE package_detail_id = $package_detail_id";
+			$result = mysqli_query($conn, $str);
+			$row = mysqli_fetch_array($result);
+			$status = $row['package_detail_status'];
+			// Toggle the status
+			if ($status == 1) 
+			{
+				$status = 0; 
+			} 
+			else 
+			{
+				$status = 1; 
+			}
+			$qry = "UPDATE package_detail_tbl SET package_detail_status='$status' WHERE package_detail_id=$package_detail_id";
+			$data= mysqli_query($conn, $qry);
+			if ($data) 
+			{
+				echo $status;  
+			}
+		}
+	#member package details status end here
+	
+	#testimonial status manage here
+		if(isset($_POST['t_id']))
+		{
+			$testimonial_id = $_POST['t_id'];
+			$str = "SELECT testimonial_status FROM testimonial_tbl WHERE testimonial_id = $testimonial_id";
+			$result = mysqli_query($conn, $str);
+			$row = mysqli_fetch_array($result);
+			$status = $row['testimonial_status'];
+			// Toggle the status
+			if ($status == 1) 
+			{
+				$status = 0; 
+			} 
+			else 
+			{
+				$status = 1; 
+			}
+			$qry = "UPDATE testimonial_tbl SET testimonial_status='$status' WHERE testimonial_id=$testimonial_id";
+			$data= mysqli_query($conn, $qry);
+			if ($data) 
+			{
+				echo $status;  
+			}
+		}
+	#testimonial status end here
+?>

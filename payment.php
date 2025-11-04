@@ -1,0 +1,43 @@
+<?php
+	include_once "connection.php";
+
+	if ($_SERVER["REQUEST_METHOD"] == "POST") {
+		$razorpay_payment_id = isset($_POST['razorpay_payment_id']) ? $_POST['razorpay_payment_id'] : '';
+		$totalAmount = isset($_POST['totalAmount']) ? $_POST['totalAmount'] : 0;
+		$member_id = isset($_POST['member_id']) ? $_POST['member_id'] : 0;
+		$package_id = isset($_POST['package_id']) ? $_POST['package_id'] : 0;
+		$duration = isset($_POST['duration']) ? $_POST['duration'] : 1;
+
+		if (!empty($razorpay_payment_id) && $member_id > 0 && $package_id > 0) {
+			$qury_payment = "INSERT INTO payment_tbl (razorpay_payment_id, total_amount, payment_status) 
+							 VALUES ('$razorpay_payment_id', '$totalAmount', 'success')";
+			//echo $qury_payment;
+
+			if (mysqli_query($conn, $qury_payment)) {
+				$payment_id = mysqli_insert_id($conn);
+				$purchase_date = date('Y-m-d');
+				$exp_date = date('Y-m-d', strtotime("$purchase_date + $duration months"));
+
+				$qury_package = "INSERT INTO package_detail_tbl (package_id, member_id, payment_id, purchase_date, package_exp_date, package_detail_status) 
+								 VALUES ('$package_id', '$member_id', '$payment_id', '$purchase_date', '$exp_date', 1)";
+
+				if (mysqli_query($conn, $qury_package)) {
+					$_SESSION['member_id']=$member_id;
+					$cnt="select * from package_detail_tbl where package_detail_status='1' and member_id=".$_SESSION['member_id'];
+					//echo $cnt;
+					$data=mysqli_query($conn,$cnt);
+					$total=mysqli_num_rows($data);
+					$_SESSION['cnt_member']=$total;
+					
+					echo "Payment and package details inserted successfully!";
+				} else {
+					echo "Error inserting into package_detail_tbl: " . mysqli_error($conn);
+				}
+			} else {
+				echo "Error inserting into payment_tbl: " . mysqli_error($conn);
+			}
+		} else {
+			echo "Invalid payment details.";
+		}
+	}
+?>

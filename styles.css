@@ -1,0 +1,134 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body Styling */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f4f4f9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Container */
+.container {
+    width: 100%;
+    max-width: 450px;
+    padding: 20px;
+}
+
+/* Form Container */
+.authentication-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.authentication-inner {
+    width: 100%;
+    max-width: 400px;
+}
+
+/* Card Styling */
+.card {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Logo */
+.app-brand-link {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    margin-bottom: 20px;
+}
+
+.app-brand-logo {
+    margin-right: 10px;
+}
+
+.app-brand-text {
+    font-size: 1.8em;
+    font-weight: 600;
+    color: #388080;
+}
+
+/* Header */
+h4 {
+    font-size: 24px;
+    font-weight: 500;
+    color: #383838;
+    margin-bottom: 10px;
+}
+
+p {
+    font-size: 14px;
+    color: #888;
+    margin-bottom: 30px;
+}
+
+/* Input Fields */
+.form-label {
+    font-size: 14px;
+    color: #383838;
+    margin-bottom: 5px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #388080;
+}
+
+/* Button */
+.btn-primary {
+    background-color: #388080;
+    color: #fff;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    padding: 12px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #2d6a64;
+}
+
+/* Back to Login Link */
+.back-to-login {
+    font-size: 14px;
+    color: #388080;
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.back-to-login:hover {
+    text-decoration: underline;
+}
+
+/* Text Centering */
+.text-center {
+    text-align: center;
+}

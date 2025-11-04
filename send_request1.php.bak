@@ -1,0 +1,79 @@
+<?php 
+	include_once 'connection.php';
+	
+	/* if(isset($_GET['member_id']))
+	{	
+		//echo "Hello";
+		$send_id = isset($_GET['member_id']) && is_array($_GET['member_id']) ? implode(",", $_GET['member_id']) : '';
+
+		//$send_id=implode(",",$_GET['member_id']);
+		$req_datetime = date("Y-m-d H:i:s");
+		$member_connect = "INSERT INTO send_request_tbl 
+							VALUES (NULL,'".$_SESSION['member_id']."', '".$send_id."', '".$req_datetime."')";
+
+		echo $member_connect;die;
+		$memebr_req=mysqli_query($conn,$member_connect);
+
+		if(isset($memebr_req))
+		{
+			//echo "<script type='text/javascript'>  window.location='plans.php'; </script>";
+		}
+		else
+		{
+			echo "<script>alert('something went wrong plz try again..')</script>";
+		}
+	} */
+	
+
+if (!$conn) {
+    die("Database connection failed: " . mysqli_connect_error());
+}
+
+if (isset($_GET['member_id']) && !empty($_GET['member_id'])) {
+    if (!isset($_SESSION['member_id'])) {
+        echo "<script>alert('Session expired. Please log in again.'); window.location='login.php';</script>";
+        exit;
+    }
+
+    $member_id = intval($_SESSION['member_id']);
+
+    // Ensure $_GET['member_id'] is properly formatted
+    if (is_array($_GET['member_id'])) {
+        $send_id = implode(",", array_map('intval', $_GET['member_id']));
+    } else {
+        $send_id = intval($_GET['member_id']);
+    }
+
+    if (empty($send_id)) {
+        echo "<script>alert('Invalid member ID. Please try again.'); window.location='plans.php';</script>";
+        exit;
+    }
+
+    $req_datetime = date("Y-m-d H:i:s");
+
+    // ✅ Corrected SQL Query (Removed 'id')
+    $query = "INSERT INTO send_request_tbl (member_id, send_request_id, request_date) VALUES (?, ?, ?)";
+    $stmt = $conn->prepare($query);
+
+    if (!$stmt) {
+        die("SQL prepare failed: " . $conn->error);
+    }
+
+    $stmt->bind_param("iss", $member_id, $send_id, $req_datetime);
+
+    if ($stmt->execute()) {
+        echo "<script type='text/javascript'> window.location='plans.php'; </script>";
+    } else {
+        echo "<script>alert('Something went wrong, please try again.')</script>";
+    }
+
+    $stmt->close();
+} else {
+    echo "<script>alert('No recipient selected.'); window.location='plans.php';</script>";
+    exit;
+}
+?>
+
+
+
+
